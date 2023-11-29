@@ -1,0 +1,100 @@
+version: '3'
+
+services:
+
+  # redis:
+  #   restart: always
+  #   container_name: flatter-redis
+  #   image: redis:alpine
+  #   command: redis-server --appendonly yes
+  #   volumes:
+  #     - redis-data:/data
+  #   expose:
+  #     - 6379
+  #   networks:
+  #     - sample-microservice
+
+  mongo-db:
+    image: mongo:6.0
+    container_name: mongo-db
+    environment:
+        - MONGO_INITDB_ROOT_USERNAME=root
+        - MONGO_INITDB_ROOT_PASSWORD=password
+        - MONGO_INITDB_DATABASE=sample-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - db:/data/db
+    networks:
+      - sample-microservice
+
+  server:
+    restart: always
+    container_name: sample-microservice-backend
+    image: sample-microservice-backend:latest
+    build: 
+      context: .
+      dockerfile: server/docker/Dockerfile
+    # command: bash -c "/usr/src/app/flatter-backend/entrypoint.sh  && daphne -b 0.0.0.0 -p 8000 backend.asgi:application"
+    environment:
+      DB_URI: mongodb://mongo-db:27017
+    #   DJANGO_ENV: ${DJANGO_ENV}
+    #   DJANGO_ADMIN_USER: ${DJANGO_ADMIN_USER}
+    #   DJANGO_ADMIN_EMAIL: ${DJANGO_ADMIN_EMAIL}
+    #   DJANGO_ADMIN_PASSWORD: ${DJANGO_ADMIN_PASSWORD}
+    #   SECRET_KEY: ${SECRET_KEY}
+    #   DB_ENGINE: ${DB_ENGINE}
+    #   DB_DATABASE: ${DB_DATABASE}
+    #   DB_USER: ${DB_USER}
+    #   DB_PASSWORD: ${DB_PASSWORD}
+    #   DB_HOST: ${DB_HOST}
+
+    # volumes:
+    #   - static:/usr/src/app/flatter-backend/static
+    #   - static:/usr/src/app/flatter-backend/media
+    expose:
+      - 8000
+    depends_on:
+      - mongo_db
+    # links:
+    #   - redis
+    networks:
+      - sample-microservice
+
+  nginx:
+    restart: always
+    container_name: sample-microservice-nginx
+    image: sample-microservice-nginx:latest
+    build:
+        context: ./nginx
+        dockerfile: ./Dockerfile
+    # volumes:
+    #   - static:/usr/src/app/flatter-backend/static
+    #   - static:/usr/src/app/flatter-backend/media
+    ports:
+      - 80:80
+    depends_on:
+      - server
+      - mongo_db
+    networks:
+      - sample-microservice
+
+# volumes:
+#   static:
+#     name: flatter-static
+#   redis-data:
+#     name: flatter-redis-data
+
+volumes:
+  db:
+    name: sample-microservice-db
+  # redis-data:
+  #   name: flatter-redis-data
+
+networks:
+  sample-microservice:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.5.0.0/16
