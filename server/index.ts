@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from 'express'
 import cors from 'cors'
-import users from './routes/users'
+import courses from './routes/courses'
 import './loadEnvironment'
 import './db/conn'
 
@@ -19,4 +19,4 @@ app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
 
-app.use('/users', users)
+app.use('/courses', courses)

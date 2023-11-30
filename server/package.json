@@ -1,7 +1,7 @@
 {
-  "name": "sample-microservice",
+  "name": "courses-microservice",
   "version": "1.0.0",
-  "description": "This is a base project to create a microservice using the following set of technologies: MongoDB, ExpressJS, ReactJS and NodeJS",
+  "description": "This microservice manages courses.",
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",

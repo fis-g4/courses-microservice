@@ -1,4 +1,5 @@
 import { User } from './models/user';
+import { Course } from './models/course';
 
 function populateUsers() {
     User.build({
@@ -12,6 +13,26 @@ function populateUsers() {
         email: 'juan@example.com',
         password: 'juan123',
     }).save();
+
+    const newUser = User.build({
+        name: "Alejandro García",
+        email: 'alejandro@garcia.com',
+        password: 'ale123',
+    });
+    
+    newUser.save()
+    .then(creator => {
+      // Now, create a new post and assign the user's ObjectId to the 'user' field
+      const newCourse = Course.build({
+        name: 'How to make Microservices',
+        description: 'Learn how to make Microservices using MongoDB, Node.js, Express and React!',
+        price: 30,
+        creator: creator._id,
+      });
+  
+      // Save the post to the database
+      return newCourse.save();
+    })
 }
 
 async function populateDB() {

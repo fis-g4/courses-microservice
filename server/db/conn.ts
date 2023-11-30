@@ -7,6 +7,8 @@ mongoose
         dbName: `${process.env.DB_NAME ?? ''}`,
         user: `${process.env.DB_USER ?? ''}`,
         pass: `${process.env.DB_PASS ?? ''}`,
+        //authSource: `${process.env.AUTH_DB ?? ''},`
+        authSource: `admin`,
     })
     .then(() => {
         console.log('Connected to MongoDB')
