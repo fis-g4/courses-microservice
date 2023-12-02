@@ -20,18 +20,18 @@ services:
     environment:
         - MONGO_INITDB_ROOT_USERNAME=root
         - MONGO_INITDB_ROOT_PASSWORD=password
-        - MONGO_INITDB_DATABASE=sample-db
+        - MONGO_INITDB_DATABASE=courses-db
     ports:
       - "27017:27017"
     volumes:
       - db:/data/db
     networks:
-      - sample-microservice
+      - courses-microservice
 
   server:
     restart: always
-    container_name: sample-microservice-backend
-    image: sample-microservice-backend:latest
+    container_name: courses-microservice-backend
+    image: courses-microservice-backend:latest
     build: 
       context: .
       dockerfile: server/docker/Dockerfile
@@ -59,12 +59,12 @@ services:
     # links:
     #   - redis
     networks:
-      - sample-microservice
+      - courses-microservice
 
   nginx:
     restart: always
-    container_name: sample-microservice-nginx
-    image: sample-microservice-nginx:latest
+    container_name: courses-microservice-nginx
+    image: courses-microservice-nginx:latest
     build:
         context: ./nginx
         dockerfile: ./Dockerfile
@@ -77,7 +77,7 @@ services:
       - server
       - mongo_db
     networks:
-      - sample-microservice
+      - courses-microservice
 
 # volumes:
 #   static:
@@ -87,7 +87,7 @@ services:
 
 volumes:
   db:
-    name: sample-microservice-db
+    name: courses-microservice-db
   # redis-data:
   #   name: flatter-redis-data
 
