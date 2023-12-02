@@ -9,15 +9,24 @@ router.get('/', async (req: Request, res: Response) => {
 
       // Loop through query parameters
       Object.keys(req.query).forEach((key) => {
-          // If the attribute is a list, handle it with $in
           if (key === 'categories' || key === 'otherListAttribute') {
             // @ts-ignore
             filters[key] = { $all: Array.isArray(req.query[key]) ? req.query[key].split(" ") : req.query[key].split(" ") };
-          } else {
+          } else if (key === 'textQuery' || key === 'otherTypeQuery') {
+            filters.$or = [
+              // @ts-ignore
+              { name: { $regex: new RegExp(req.query[key], 'i') } },
+              // @ts-ignore
+              { description: { $regex: new RegExp(req.query[key], 'i') } },
+            ]
+          }
+          else {
             // If it's a single value attribute, directly assign the value
             filters[key] = req.query[key];
           }
       });
+
+      console.log(filters)
 
       const courses = await Course.find(filters);
 
