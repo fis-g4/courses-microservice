@@ -23,10 +23,15 @@ function populateUsers() {
     newUser.save()
     .then(creator => {
       // Now, create a new post and assign the user's ObjectId to the 'user' field
-      const newCourse = Course.build({
+      const newCourse = new Course({
         name: 'How to make Microservices',
-        description: 'Learn how to make Microservices using MongoDB, Node.js, Express and React!',
+        description: 'Learn how to make Microservices using MongoDB, Node.js, Express.js and React!',
         price: 30,
+        categories: [
+            'MongoDB', 'Node.js', 'Express.js', 'React', 'Microservices', 'Software Engineering', 'IT', 
+            'Computer Science',
+        ],
+        language: 'English',
         creator: creator._id,
       });
   

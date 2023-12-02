@@ -7,6 +7,8 @@ interface ICourse{
     name: string;
     description: string;
     price: number;
+    categories: string[];
+    language: string;
     creator: IUser;
 }
 
@@ -14,6 +16,8 @@ interface CourseDoc extends mongoose.Document {
     name: string;
     description: string;
     price: number;
+    categories: string[];
+    language: string;
     creator: IUser;
 }
 
@@ -33,6 +37,14 @@ const courseSchema = new Schema({
     },
     price: {
         type: Number,
+        required: true,
+    },
+    categories: {
+        type: [String],
+        required: true,
+    },
+    language: {
+        type: String,
         required: true,
     },
     creator: {

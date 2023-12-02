@@ -7,5 +7,7 @@ interface CourseFormInputs {
   name: string,
   description: string;
   price: number;
+  categories: string[];
+  language: string;
   creator: IUser;
 }
