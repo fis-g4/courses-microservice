@@ -26,8 +26,6 @@ router.get('/', async (req: Request, res: Response) => {
           }
       });
 
-      console.log(filters)
-
       const courses = await Course.find(filters);
 
       return res.status(200).json(courses);
@@ -43,9 +41,15 @@ router.get('/:courseId', async (req: Request, res: Response) => {
       if (course)
         return res.status(200).json(course)
       else
-      return res.status(404).json({ error: 'Course not found' });
+        return res.status(404).json({ error: 'Course not found' });
     } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' });
+      //@ts-ignore
+      if (error.errors) {
+        return res.status(400).json({ error: 'Validation error when saving' });
+      }
+      else {
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
     }
 })
 
@@ -66,7 +70,13 @@ router.post('/', async (req: Request, res: Response) => {
 
     return res.status(201).send('Course created!')
   } catch (error) {
-    return res.status(500).json({ error: 'Internal Server Error' });
+    //@ts-ignore
+    if (error.errors) {
+      return res.status(400).json({ error: 'Validation error when saving' });
+    }
+    else {
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
   }
 })
 
