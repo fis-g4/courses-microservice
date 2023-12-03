@@ -11,4 +11,4 @@ This microservice manages courses.
 - Implementar el patrón “circuit breaker” en las comunicaciones con otros servicios.
 - Implementar mecanismos de gestión de la capacidad como throttling o feature toggles.
 
-Completed targets: 0/7
+Completed targets: 0/6
