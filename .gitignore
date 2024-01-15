@@ -152,3 +152,14 @@ dist
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Google Cloud Key
+GoogleCloudKey.json
+
+# Prod variables
+terraform/.env.prod
+.terraform/
+.terraform*
+.ssh/
+*.tfvars
+.terraform/
