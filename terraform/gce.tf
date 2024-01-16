@@ -17,7 +17,7 @@ resource "google_compute_instance" "courses-service-instance" {
     access_config {
     }
   }
-
+ 
   metadata = {
     ssh-keys = "${var.user}:${file(var.publickeypath)}"
   }
