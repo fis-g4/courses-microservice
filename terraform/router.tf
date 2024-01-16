@@ -10,7 +10,7 @@ resource "google_compute_router" "fis_g4_router" {
 
 resource "google_compute_subnetwork" "courses-service-subnetwork" {
   name          = "courses-service-subnetwork"
-  ip_cidr_range = "10.0.10.0/60"
+  ip_cidr_range = "10.0.10.60/24"
   region        = var.region
   network       = "fis-g4-network-cd"
 }
