@@ -118,4 +118,8 @@ router.delete('/:courseId', async (req: Request, res: Response) => {
   }
 })
 
+router.get('/check', async (req: Request, res: Response) => {
+    return res.status(200).json({ message: "The courses service is working properly!!" })
+})
+
 export default router
