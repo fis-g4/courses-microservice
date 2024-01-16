@@ -64,6 +64,7 @@ router.post('/', async (req: Request, res: Response) => {
       categories: categories,
       language: language,
       creator: creator,
+      score: 3,
     });
 
     await course.save();
@@ -113,6 +114,18 @@ router.delete('/:courseId', async (req: Request, res: Response) => {
     await Course.deleteOne({ _id : courseId })
     
     return res.status(200).send("Course deleted!")
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+})
+
+
+
+router.get('/best', async (req: Request, res: Response) => {
+  try {
+    const courses = await Course.find().sort({ score: -1 }).limit(6);
+
+    return res.status(200).json(courses);
   } catch (error) {
     return res.status(500).json({ error: 'Internal Server Error' });
   }

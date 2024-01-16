@@ -10,6 +10,7 @@ interface ICourse{
     categories: string[];
     language: string;
     creator: IUser;
+    score: number;
 }
 
 interface CourseDoc extends mongoose.Document {
@@ -19,6 +20,7 @@ interface CourseDoc extends mongoose.Document {
     categories: string[];
     language: string;
     creator: IUser;
+    score: number;
 }
 
 interface CourseModelInterface extends mongoose.Model<CourseDoc> {
@@ -50,7 +52,11 @@ const courseSchema = new Schema({
     creator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-    }
+    },
+    score: {
+        type: Number,
+        default: 3,
+    },
 })
 
 courseSchema.statics.build = (course: ICourse) => {
