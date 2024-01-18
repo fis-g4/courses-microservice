@@ -128,12 +128,14 @@ async function handleMessages(message: string) {
             courseIds,
         }
 
+        /*
         await sendMessage(
             'learning-microservice',
             'notificationDeleteManyCourses',
             process.env.API_KEY ?? '',
             JSON.stringify(data)
         )
+        */
 
         await Course.deleteMany({ creator : deletedUsername })
         await MaterliaziedView.deleteMany({ username : deletedUsername })
