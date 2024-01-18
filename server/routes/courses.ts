@@ -1,5 +1,6 @@
 import express, {Request, Response} from 'express';
 import { Course } from '../db/models/course';
+import { sendMessage } from '../rabbitmq/operations'
 
 const router = express.Router()
 
@@ -65,6 +66,9 @@ router.post('/', async (req: Request, res: Response) => {
       language: language,
       creator: creator,
       score: 3,
+      access: [],
+      classes: [],
+      materials: [],
     });
 
     await course.save();
@@ -110,6 +114,28 @@ router.put('/:courseId', async (req: Request, res: Response) => {
 router.delete('/:courseId', async (req: Request, res: Response) => {
   try {
     const courseId = req.params.courseId;
+
+    const course = await Course.findById(courseId)
+    let classes: string[] = []
+    let materials: string[] = []
+
+    if (course) {
+        classes = course.classes
+        materials = course.materials
+    }
+
+    const data = {
+        courseId,
+        classes,
+        materials,
+    }
+
+    await sendMessage(
+        'learning-microservice',
+        'notificationDeleteCourse',
+        process.env.API_KEY ?? '',
+        JSON.stringify(data)
+    )
   
     await Course.deleteOne({ _id : courseId })
     

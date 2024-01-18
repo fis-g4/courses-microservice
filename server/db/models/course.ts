@@ -11,6 +11,9 @@ interface ICourse{
     language: string;
     creator: IUser;
     score: number;
+    access: IUser[];
+    classes: string[];
+    materials: string[];
 }
 
 interface CourseDoc extends mongoose.Document {
@@ -21,6 +24,9 @@ interface CourseDoc extends mongoose.Document {
     language: string;
     creator: IUser;
     score: number;
+    access: IUser[];
+    classes: string[];
+    materials: string[];
 }
 
 interface CourseModelInterface extends mongoose.Model<CourseDoc> {
@@ -57,6 +63,18 @@ const courseSchema = new Schema({
         type: Number,
         default: 3,
     },
+    access: {
+        type: [mongoose.Schema.Types.ObjectId],
+        required: true,
+    },
+    classes: {
+        type: [String],
+        required: true,
+    },
+    materials: {
+        type: [String],
+        required: true,
+    }
 })
 
 courseSchema.statics.build = (course: ICourse) => {
