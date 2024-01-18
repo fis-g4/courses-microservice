@@ -48,6 +48,8 @@ app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
 
+const MICROSERVICE_QUEUE = 'courses_microservice'
+
 app.use('/v1/courses', courses)
 
 receiveMessages(MICROSERVICE_QUEUE)

@@ -9,7 +9,7 @@ interface ICourse{
     price: number;
     categories: string[];
     language: string;
-    creator: IUser;
+    creator: string;
     score: number;
     access: IUser[];
     classes: string[];
@@ -22,7 +22,7 @@ interface CourseDoc extends mongoose.Document {
     price: number;
     categories: string[];
     language: string;
-    creator: IUser;
+    creator: string;
     score: number;
     access: IUser[];
     classes: string[];
@@ -56,8 +56,8 @@ const courseSchema = new Schema({
         required: true,
     },
     creator: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        type: String,
+        required: true,
     },
     score: {
         type: Number,

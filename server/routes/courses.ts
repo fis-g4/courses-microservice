@@ -2,11 +2,34 @@ import express, {Request, Response} from 'express';
 import { Course } from '../db/models/course';
 import { sendMessage } from '../rabbitmq/operations'
 import redisClient from '../db/redis'
+import {
+    IUser,
+    getPayloadFromToken,
+    getTokenFromRequest,
+} from '../utils/jwtUtils'
+import { MaterliaziedView } from '../db/models/materializedView';
 
 const router = express.Router()
 
 router.get('/', async (req: Request, res: Response) => {
     try {
+      let decodedToken: IUser = await getPayloadFromToken(
+          getTokenFromRequest(req) ?? ''
+      )
+      const username: string = decodedToken.username
+      const firstName: string = decodedToken.firstName
+      const lastName: string = decodedToken.lastName
+      const profilePicture: string = decodedToken.profilePicture
+      
+      const materializedView = MaterliaziedView.build({
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        profilePicture: profilePicture,
+      });
+  
+      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
+
       let filters: { [key: string]: any } = {};
 
       // Loop through query parameters
@@ -38,6 +61,23 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.get('/:courseId', async (req: Request, res: Response) => {
     try {
+      let decodedToken: IUser = await getPayloadFromToken(
+          getTokenFromRequest(req) ?? ''
+      )
+      const username: string = decodedToken.username
+      const firstName: string = decodedToken.firstName
+      const lastName: string = decodedToken.lastName
+      const profilePicture: string = decodedToken.profilePicture
+      
+      const materializedView = MaterliaziedView.build({
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        profilePicture: profilePicture,
+      });
+  
+      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
+
       const courseId = req.params.courseId;
       const course = await Course.findById(courseId);
       if (course)
@@ -57,15 +97,34 @@ router.get('/:courseId', async (req: Request, res: Response) => {
 
 router.get('/:courseId/classes', async (req: Request, res: Response) => {
     try {
+      let decodedToken: IUser = await getPayloadFromToken(
+          getTokenFromRequest(req) ?? ''
+      )
+      const username: string = decodedToken.username
+      const firstName: string = decodedToken.firstName
+      const lastName: string = decodedToken.lastName
+      const profilePicture: string = decodedToken.profilePicture
+      
+      const materializedView = MaterliaziedView.build({
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        profilePicture: profilePicture,
+      });
+  
+      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
+      
       const courseId = req.params.courseId;
       const course = await Course.findById(courseId);
       if (course) {
         let classes = null
+        //@ts-ignore
         await redisClient.exists(courseId + " classes").then(async (exists) => {
             if (exists === 1) {
-                await redisClient.get(courseId + " classes").then((reply) => {
-                    classes = reply
-                })
+              //@ts-ignore
+              await redisClient.get(courseId + " classes").then((reply) => {
+                  classes = reply
+              })
             } else {
                 const message = JSON.stringify({
                     courseId,
@@ -95,15 +154,34 @@ router.get('/:courseId/classes', async (req: Request, res: Response) => {
 
 router.get('/:courseId/materials', async (req: Request, res: Response) => {
     try {
+      let decodedToken: IUser = await getPayloadFromToken(
+          getTokenFromRequest(req) ?? ''
+      )
+      const username: string = decodedToken.username
+      const firstName: string = decodedToken.firstName
+      const lastName: string = decodedToken.lastName
+      const profilePicture: string = decodedToken.profilePicture
+      
+      const materializedView = MaterliaziedView.build({
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        profilePicture: profilePicture,
+      });
+  
+      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
+      
       const courseId = req.params.courseId;
       const course = await Course.findById(courseId);
       if (course) {
         let materials = null
+        //@ts-ignore
         await redisClient.exists(courseId + " materials").then(async (exists) => {
             if (exists === 1) {
-                await redisClient.get(courseId + " materials").then((reply) => {
-                    materials = reply
-                })
+              //@ts-ignore
+              await redisClient.get(courseId + " materials").then((reply) => {
+                  materials = reply
+              })
             } else {
                 const message = JSON.stringify({
                     courseId,
@@ -133,7 +211,24 @@ router.get('/:courseId/materials', async (req: Request, res: Response) => {
 
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { name, description, price, categories, language, creator }: CourseFormInputs = req.body
+    let decodedToken: IUser = await getPayloadFromToken(
+        getTokenFromRequest(req) ?? ''
+    )
+    const username: string = decodedToken.username
+    const firstName: string = decodedToken.firstName
+    const lastName: string = decodedToken.lastName
+    const profilePicture: string = decodedToken.profilePicture
+    
+    const materializedView = MaterliaziedView.build({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      profilePicture: profilePicture,
+    });
+
+    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
+
+    const { name, description, price, categories, language }: CourseFormInputs = req.body
 
     const course = Course.build({
       name: name, 
@@ -141,7 +236,7 @@ router.post('/', async (req: Request, res: Response) => {
       price: price,
       categories: categories,
       language: language,
-      creator: creator,
+      creator: username,
       score: 3,
       access: [],
       classes: [],
@@ -164,7 +259,24 @@ router.post('/', async (req: Request, res: Response) => {
 
 router.put('/:courseId', async (req: Request, res: Response) => {
   try {
-    const { name, description, price, categories, language, creator }: CourseFormInputs = req.body
+    let decodedToken: IUser = await getPayloadFromToken(
+        getTokenFromRequest(req) ?? ''
+    )
+    const username: string = decodedToken.username
+    const firstName: string = decodedToken.firstName
+    const lastName: string = decodedToken.lastName
+    const profilePicture: string = decodedToken.profilePicture
+    
+    const materializedView = MaterliaziedView.build({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      profilePicture: profilePicture,
+    });
+
+    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
+    
+    const { name, description, price, categories, language }: CourseFormInputs = req.body
     const courseId = req.params.courseId;
   
     var course = await Course.findById(courseId);
@@ -174,7 +286,7 @@ router.put('/:courseId', async (req: Request, res: Response) => {
       course.price = price;
       course.categories = categories;
       course.language = language;
-      course.creator = creator;
+      course.creator = username;
   
       await course.save();
     
@@ -190,21 +302,38 @@ router.put('/:courseId', async (req: Request, res: Response) => {
 
 router.delete('/:courseId', async (req: Request, res: Response) => {
   try {
+    let decodedToken: IUser = await getPayloadFromToken(
+        getTokenFromRequest(req) ?? ''
+    )
+    const username: string = decodedToken.username
+    const firstName: string = decodedToken.firstName
+    const lastName: string = decodedToken.lastName
+    const profilePicture: string = decodedToken.profilePicture
+    
+    const materializedView = MaterliaziedView.build({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      profilePicture: profilePicture,
+    });
+
+    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
+    
     const courseId = req.params.courseId;
 
     const course = await Course.findById(courseId)
-    let classes: string[] = []
-    let materials: string[] = []
+    let classIds: string[] = []
+    let materialIds: string[] = []
 
     if (course) {
-        classes = course.classes
-        materials = course.materials
+        classIds = course.classes
+        materialIds = course.materials
     }
 
     const data = {
         courseId,
-        classes,
-        materials,
+        classIds,
+        materialIds,
     }
 
     await sendMessage(

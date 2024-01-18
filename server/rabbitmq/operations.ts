@@ -2,6 +2,7 @@ import amqplib, { Channel, Connection } from 'amqplib'
 import axios from 'axios'
 import { Course } from '../db/models/course'
 import redisClient from '../db/redis'
+import { MaterliaziedView } from '../db/models/materializedView'
 
 let channel: Channel, connection: Connection
 const FIVE_HOURS = 60 * 60 * 5
@@ -50,59 +51,7 @@ async function handleMessages(message: string) {
     const jsonMessage = JSON.parse(message)
     const operationId = jsonMessage.operationId
     const messageContent = jsonMessage.message
-    if (operationId === 'requestAppClassesAndMaterials') {
-        const courseId = messageContent.courseId
-        //const classIds = messageContent.classIds
-        //const materialIds = messageContent.materialIds
-
-        const course = await Course.findById(courseId)
-        let classes: string[] = []
-        let materials: string[] = []
-
-        if (course) {
-            classes = course.classes
-            materials = course.materials
-        }
-
-        const data = {
-            courseId,
-            classes,
-            materials,
-        }
-
-        await sendMessage(
-            'learning-microservice',
-            'responseAppClassesAndMaterials',
-            process.env.API_KEY ?? '',
-            JSON.stringify(data)
-        )
-    } else if (operationId === 'notificationDeleteCourse') {
-        const courseId = messageContent.courseId
-        const classIds = messageContent.classIds
-        const materialIds = messageContent.materialIds
-
-        const course = await Course.findById(courseId)
-        let classes: string[] = []
-        let materials: string[] = []
-
-        if (course) {
-            classes = course.classes
-            materials = course.materials
-        }
-
-        const data = {
-            courseId,
-            classes,
-            materials,
-        }
-
-        await sendMessage(
-            'learning-microservice',
-            'notificationDeleteCourse',
-            process.env.API_KEY ?? '',
-            JSON.stringify(data)
-        )
-    } else if (operationId === 'publishNewCourseAccess') {
+    if (operationId === 'publishNewCourseAccess') {
         const username = messageContent.username
         const courseId = messageContent.courseId
 
@@ -164,6 +113,30 @@ async function handleMessages(message: string) {
                 await course.save()
             }
         }
+    } else if (operationId === 'notificationUserDeletion') {
+        const deletedUsername = messageContent.username
+        
+        const courses = await Course.find({ creator : deletedUsername })
+
+        courses.map(async (course) => {
+            course.access = course.access.filter((username) => username !== deletedUsername);
+            await course.save();
+        });
+
+        const courseIds = courses
+        const data = {
+            courseIds,
+        }
+
+        await sendMessage(
+            'learning-microservice',
+            'notificationDeleteManyCourses',
+            process.env.API_KEY ?? '',
+            JSON.stringify(data)
+        )
+
+        await Course.deleteMany({ creator : deletedUsername })
+        await MaterliaziedView.deleteMany({ username : deletedUsername })
     }
 }
 
