@@ -118,8 +118,8 @@ async function handleMessages(message: string) {
         const classes = messageContent.classIds
         const materials = messageContent.materialIds
         
-        await redisClient.set(courseId, classes, { EX: FIVE_HOURS })
-        await redisClient.set(courseId, materials, { EX: FIVE_HOURS })
+        await redisClient.set(courseId + " classes", classes, { EX: FIVE_HOURS })
+        await redisClient.set(courseId + " materials", materials, { EX: FIVE_HOURS })
     } else if (operationId === 'notificationNewClass') {
         const classId = messageContent.classId
         const courseId = messageContent.courseId

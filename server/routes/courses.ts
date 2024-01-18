@@ -1,6 +1,7 @@
 import express, {Request, Response} from 'express';
 import { Course } from '../db/models/course';
 import { sendMessage } from '../rabbitmq/operations'
+import redisClient from '../db/redis'
 
 const router = express.Router()
 
@@ -42,6 +43,82 @@ router.get('/:courseId', async (req: Request, res: Response) => {
       if (course)
         return res.status(200).json(course)
       else
+        return res.status(404).json({ error: 'Course not found' });
+    } catch (error) {
+      //@ts-ignore
+      if (error.errors) {
+        return res.status(400).json({ error: 'Validation error when saving' });
+      }
+      else {
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+    }
+})
+
+router.get('/:courseId/classes', async (req: Request, res: Response) => {
+    try {
+      const courseId = req.params.courseId;
+      const course = await Course.findById(courseId);
+      if (course) {
+        let classes = null
+        await redisClient.exists(courseId + " classes").then(async (exists) => {
+            if (exists === 1) {
+                await redisClient.get(courseId + " classes").then((reply) => {
+                    classes = reply
+                })
+            } else {
+                const message = JSON.stringify({
+                    courseId,
+                })
+                await sendMessage(
+                    'learning-microservice',
+                    'requestAppClassesAndMaterials',
+                    process.env.API_KEY ?? '',
+                    message
+                )
+            }
+        })
+        return res.status(200).json(classes)
+      }
+      else 
+        return res.status(404).json({ error: 'Course not found' });
+    } catch (error) {
+      //@ts-ignore
+      if (error.errors) {
+        return res.status(400).json({ error: 'Validation error when saving' });
+      }
+      else {
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+    }
+})
+
+router.get('/:courseId/materials', async (req: Request, res: Response) => {
+    try {
+      const courseId = req.params.courseId;
+      const course = await Course.findById(courseId);
+      if (course) {
+        let materials = null
+        await redisClient.exists(courseId + " materials").then(async (exists) => {
+            if (exists === 1) {
+                await redisClient.get(courseId + " materials").then((reply) => {
+                    materials = reply
+                })
+            } else {
+                const message = JSON.stringify({
+                    courseId,
+                })
+                await sendMessage(
+                    'learning-microservice',
+                    'requestAppClassesAndMaterials',
+                    process.env.API_KEY ?? '',
+                    message
+                )
+            }
+        })
+        return res.status(200).json(materials)
+      }
+      else 
         return res.status(404).json({ error: 'Course not found' });
     } catch (error) {
       //@ts-ignore
