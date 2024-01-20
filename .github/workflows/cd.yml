@@ -48,7 +48,7 @@ jobs:
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
-        working-directory: ./terraform
+        working-directory: ./terraform 
 
       - name: Terraform Destroy
         id: destroy
