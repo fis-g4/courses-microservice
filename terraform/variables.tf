@@ -37,7 +37,7 @@ variable "json_credentials" {
 variable "network_name" {
   type        = string
   description = "The name of the network"
-  default     = "fis-g4-network-cd"
+  default     = "fis_g4_network_cd"
 }
 
 variable "firewall_name" {

@@ -1,7 +1,7 @@
 resource "google_compute_router" "fis-g4-router" {
   name    = var.router_name
   region  = var.region
-  network = "fis-g4-network-cd"
+  network = "fis_g4_network_cd"
 
   bgp {
     asn = 64514
@@ -12,7 +12,7 @@ resource "google_compute_subnetwork" "courses-service-subnetwork" {
   name          = "courses-service-subnetwork"
   ip_cidr_range = "10.0.60.0/24"
   region        = var.region
-  network       = "fis-g4-network-cd"
+  network       = "fis_g4_network_cd"
 }
 
 resource "google_compute_router_nat" "fis-g4-cloud-nat" {
