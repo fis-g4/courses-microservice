@@ -1,4 +1,4 @@
-resource "google_compute_http_health_check" "courses-service-health-check" {
+resource "google_compute_http_health_check" "courses_service_health_check" {
   name         = var.health_check_name
   request_path = var.health_check_path
 
@@ -6,12 +6,12 @@ resource "google_compute_http_health_check" "courses-service-health-check" {
   check_interval_sec = 5
 }
 
-resource "google_compute_instance_group" "courses-service-group" {
+resource "google_compute_instance_group" "courses_service_group" {
   name        = var.group_name
   description = var.group_description
 
   instances = [
-    google_compute_instance.courses-service-instance.id,
+    google_compute_instance.courses_service_instance.id,
   ]
 
   named_port {
@@ -27,17 +27,17 @@ resource "google_compute_instance_group" "courses-service-group" {
   zone = var.zone
 }
 
-resource "google_compute_backend_service" "courses-service-backend" {
+resource "google_compute_backend_service" "courses_service_backend" {
   name      = var.backend_service_name
   port_name = "http"
   protocol  = "HTTP"
   load_balancing_scheme = "EXTERNAL_MANAGED"
 
   backend {
-    group = google_compute_instance_group.courses-service-group.id
+    group = google_compute_instance_group.courses_service_group.id
   }
 
   health_checks = [
-    google_compute_http_health_check.courses-service-health-check.id,
+    google_compute_http_health_check.courses_service_health_check.id,
   ]
 }

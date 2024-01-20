@@ -1,4 +1,4 @@
-resource "google_compute_instance" "courses-service-instance" {
+resource "google_compute_instance" "courses_service_instance" {
   name         = var.instance_name
   machine_type = var.instance_machine_type
   zone         = var.zone
@@ -12,7 +12,7 @@ resource "google_compute_instance" "courses-service-instance" {
   }
 
   network_interface {
-    subnetwork = "fis_g4_network_cd"
+    subnetwork = google_compute_subnetwork.courses_service_subnetwork.id
 
     access_config {
     }
