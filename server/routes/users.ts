@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { User, IUser, ObjectId, PlanType, UserRole } from '../db/models/user'; // Ajusta la importación según tu estructura
+import { User, IUser, PlanType, UserRole } from '../db/models/user'; // Ajusta la importación según tu estructura
 
 const router = express.Router();
 
