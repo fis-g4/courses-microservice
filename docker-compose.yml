@@ -12,9 +12,9 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - courses-microservice
+      - courses-network
 
-  mongo-db:
+  mongo_db:
     image: mongo:6.0
     container_name: mongo-db
     environment:
@@ -26,7 +26,7 @@ services:
     volumes:
       - db:/data/db
     networks:
-      - courses-microservice
+      - courses-network
 
   server:
     restart: always
@@ -62,7 +62,7 @@ services:
     env_file:
       - .env
     networks:
-      - courses-microservice
+      - courses-network
 
   nginx:
     restart: always
@@ -80,7 +80,7 @@ services:
       - server
       - mongo_db
     networks:
-      - courses-microservice
+      - courses-network
 
 # volumes:
 #   static:
@@ -95,9 +95,10 @@ volumes:
     name: courses-microservice-redis-data
 
 networks:
-  courses-microservice:
+  learning-network:
     driver: bridge
     ipam:
       driver: default
       config:
         - subnet: 10.5.0.0/16
+  
