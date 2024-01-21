@@ -95,7 +95,7 @@ volumes:
     name: courses-microservice-redis-data
 
 networks:
-  learning-network:
+  courses-network:
     driver: bridge
     ipam:
       driver: default
