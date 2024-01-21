@@ -12,7 +12,7 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - learning-network
+      - courses-microservice
 
   mongo-db:
     image: mongo:6.0
@@ -95,7 +95,7 @@ volumes:
     name: courses-microservice-redis-data
 
 networks:
-  sample-microservice:
+  courses-microservice:
     driver: bridge
     ipam:
       driver: default
