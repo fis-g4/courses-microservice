@@ -9,5 +9,4 @@ interface CourseFormInputs {
   price: number;
   categories: string[];
   language: string;
-  creator: IUser;
 }
