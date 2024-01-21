@@ -1,23 +1,42 @@
-import { User } from './models/user';
+import { PlanType, User, UserRole } from './models/user';
 import { Course } from './models/course';
 
 function populateUsers() {
     User.build({
-        name: 'Maria Doe',
-        email: 'maria@example.com',
+        firstName: 'Maria',
+        lastName: 'Doe',
+        username: 'maria_username',
         password: 'maria123',
+        email: 'maria@example.com',
+        profilePicture: 'maria.jpg',
+        coinsAmount: 100,
+        plan: PlanType.BASIC,
+        role: UserRole.USER,
     }).save();
     
     User.build({
-        name: 'Juan Doe',
-        email: 'juan@example.com',
+        firstName: 'Juan',
+        lastName: 'Doe',
+        username: 'juan_username',
         password: 'juan123',
+        email: 'juan@example.com',
+        profilePicture: 'juan.jpg',
+        coinsAmount: 150,
+        plan: PlanType.ADVANCED,
+        role: UserRole.ADMIN,
     }).save();
-
+    
+    // Construye un nuevo usuario sin guardarlo inmediatamente
     const newUser = User.build({
-        name: "Alejandro García",
-        email: 'alejandro@garcia.com',
+        firstName: 'Alejandro',
+        lastName: 'García',
+        username: 'alejandro_username',
         password: 'ale123',
+        email: 'alejandro@garcia.com',
+        profilePicture: 'alejandro.jpg',
+        coinsAmount: 200,
+        plan: PlanType.PRO,
+        role: UserRole.USER,
     });
     
     newUser.save()
