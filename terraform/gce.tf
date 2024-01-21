@@ -12,7 +12,7 @@ resource "google_compute_instance" "courses_service_instance" {
   }
 
   network_interface {
-    subnetwork = google_compute_subnetwork.courses_service_subnetwork.id
+    subnetwork = google_compute_subnetwork.courses-service-subnetwork.id
 
     access_config {
     }
