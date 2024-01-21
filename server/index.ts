@@ -1,4 +1,5 @@
 import express, { Express, Request, Response } from 'express'
+import { receiveMessages } from './rabbitmq/operations'
 import cors from 'cors'
 import courses from './routes/courses'
 import './loadEnvironment'
@@ -47,4 +48,12 @@ app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
 
+const MICROSERVICE_QUEUE = 'courses_microservice'
+
 app.use('/v1/courses', courses)
+
+receiveMessages(MICROSERVICE_QUEUE)
+
+app.listen(port, () => {
+    console.info(`Courses microservice listening on port ${port}`)
+})
