@@ -31,7 +31,7 @@ services:
   server:
     restart: always
     container_name: courses-microservice-backend
-    image: sample-microservice-backend:latest
+    image: courses-microservice-backend:latest
     build: 
       context: .
       dockerfile: server/docker/Dockerfile
@@ -92,7 +92,7 @@ volumes:
   #   name: flatter-redis-data
 
 networks:
-  sample-microservice:
+  courses-microservice:
     driver: bridge
     ipam:
       driver: default
