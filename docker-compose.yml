@@ -2,17 +2,17 @@ version: '3'
 
 services:
 
-  redis:
-    restart: always
-    container_name: redis
-    image: redis:alpine
-    command: redis-server --save 20 1 --loglevel warning --requirepass "password"
-    volumes:
-      - redis-data:/data
-    ports:
-      - "6379:6379"
-    networks:
-      - learning-network
+  # redis:
+  #   restart: always
+  #   container_name: flatter-redis
+  #   image: redis:alpine
+  #   command: redis-server --appendonly yes
+  #   volumes:
+  #     - redis-data:/data
+  #   expose:
+  #     - 6379
+  #   networks:
+  #     - sample-microservice
 
   mongo-db:
     image: mongo:6.0
@@ -31,7 +31,7 @@ services:
   server:
     restart: always
     container_name: courses-microservice-backend
-    image: courses-microservice-backend:latest
+    image: sample-microservice-backend:latest
     build: 
       context: .
       dockerfile: server/docker/Dockerfile
@@ -56,11 +56,8 @@ services:
       - 8000
     depends_on:
       - mongo_db
-      - redis
-    links:
-      - redis
-    env_file:
-      - .env
+    # links:
+    #   - redis
     networks:
       - courses-microservice
 
@@ -91,8 +88,8 @@ services:
 volumes:
   db:
     name: courses-microservice-db
-  redis-data:
-    name: courses-microservice-redis-data
+  # redis-data:
+  #   name: flatter-redis-data
 
 networks:
   sample-microservice:
