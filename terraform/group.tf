@@ -11,7 +11,7 @@ resource "google_compute_instance_group" "courses-service-group" {
   description = var.group_description
 
   instances = [
-    google_compute_instance.courses_service_instance.id,
+    google_compute_instance.courses-service-instance.id,
   ]
 
   named_port {
