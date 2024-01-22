@@ -44,10 +44,6 @@ app.use((req, res, next) => {
 
 const port = process.env.PORT ?? 8000
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
-
 const MICROSERVICE_QUEUE = 'courses_microservice'
 
 app.use('/v1/courses', courses)
