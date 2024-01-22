@@ -126,7 +126,7 @@ router.get('/:courseId/classes', async (req: Request, res: Response) => {
       });
   
       await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
-      */ 
+      */
       
       const courseId = req.params.courseId;
       const course = await Course.findById(courseId);
