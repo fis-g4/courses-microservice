@@ -3,6 +3,7 @@ import './loadEnvironment'
 import { receiveMessages } from './rabbitmq/operations'
 import cors from 'cors'
 import courses from './routes/courses'
+import reviews from './routes/reviews'
 import './db/conn'
 import { generateToken, verifyToken } from './utils/jwtUtils'
 
@@ -49,6 +50,7 @@ const port = process.env.PORT ?? 8000
 const MICROSERVICE_QUEUE = 'courses_microservice'
 
 app.use('/v1/courses', courses)
+app.use('/v1/reviews', reviews)
 
 //receiveMessages(MICROSERVICE_QUEUE)
 

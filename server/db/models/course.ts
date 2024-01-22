@@ -3,7 +3,7 @@ import { IUser } from './user';
 
 const { Schema } = mongoose
 
-interface ICourse{
+export interface ICourse{
     name: string;
     description: string;
     price: number;
