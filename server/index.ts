@@ -1,8 +1,8 @@
 import express, { Express, Request, Response } from 'express'
+import './loadEnvironment'
 import { receiveMessages } from './rabbitmq/operations'
 import cors from 'cors'
 import courses from './routes/courses'
-import './loadEnvironment'
 import './db/conn'
 import { generateToken, verifyToken } from './utils/jwtUtils'
 
