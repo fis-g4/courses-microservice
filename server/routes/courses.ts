@@ -377,8 +377,6 @@ router.delete('/:courseId', async (req: Request, res: Response) => {
   }
 })
 
-
-
 router.get('/best', async (req: Request, res: Response) => {
   try {
     const courses = await Course.find().sort({ score: -1 }).limit(6);

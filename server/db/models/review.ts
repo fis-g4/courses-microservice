@@ -8,18 +8,18 @@ interface IReview{
     title: string;
     description: string;
     score: number;
-    course: ICourse | null;
-    creator: IUser | null;
-    material: IMaterial | null;
+    course: string;
+    creator: string;
+    material: string;
 }
 
 interface ReviewDoc extends mongoose.Document {
     title: string;
     description: string;
     score: number;
-    course: ICourse | null;
-    creator: IUser | null;
-    material: IMaterial | null;
+    course: string;
+    creator: string;
+    material: string;
 }
 
 interface ReviewModelInterface extends mongoose.Model<ReviewDoc> {
@@ -41,16 +41,13 @@ const reviewSchema = new Schema({
         //required: true,
     },
     course: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course',
+        type: String,
     },
     creator: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        type: String,
     },
     material: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Material',
+        type: String,
     },
 })
 
