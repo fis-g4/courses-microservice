@@ -48,7 +48,7 @@ const MICROSERVICE_QUEUE = 'courses_microservice'
 
 app.use('/v1/courses', courses)
 
-receiveMessages(MICROSERVICE_QUEUE)
+//receiveMessages(MICROSERVICE_QUEUE)
 
 app.listen(port, () => {
     console.info(`Courses microservice listening on port ${port}`)
