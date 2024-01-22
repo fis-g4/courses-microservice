@@ -15,6 +15,8 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Hello World From the Courses Service!')
 })
 
+const URLS_ALLOWED_WITHOUT_TOKEN = ['/v1/courses/check']
+
 app.use((req, res, next) => {
 
     let bearerHeader = req.headers['authorization'] as string;
