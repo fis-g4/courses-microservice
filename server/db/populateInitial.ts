@@ -1,4 +1,5 @@
 import { PlanType, User, UserRole } from './models/user';
+import { Review } from './models/review';
 import { Course } from './models/course';
 
 function populateUsers() {
@@ -59,17 +60,31 @@ function populateUsers() {
     })
 }
 
+function populateReviews() {
+    Review.build({
+        title: "Muy buena profesora",
+        description: "Me ha gustado mucho",
+        score: 5,
+        course: "null",
+        creator: "null",
+        material: "null",     
+    }).save();
+}
+
 async function populateDB() {
 
     console.log('Populating DB...');
     
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production' && process.env.npm_config_run_tests!== 'true') {
 
         User.collection.countDocuments().then((count) => {
             if (count === 0) {
                 populateUsers()
+                populateReviews()
             }
         })
+    }else if(process.env.npm_config_run_tests=== 'true'){
+        
     }
 
     console.log('Populated!');

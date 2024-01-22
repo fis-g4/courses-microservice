@@ -23,6 +23,7 @@ router.get('/list', async (req: Request, res: Response) => {
           getTokenFromRequest(req) ?? ''
       )
       const username: string = decodedToken.username
+      /*
       const firstName: string = decodedToken.firstName
       const lastName: string = decodedToken.lastName
       const profilePicture: string = decodedToken.profilePicture
@@ -35,6 +36,8 @@ router.get('/list', async (req: Request, res: Response) => {
       });
   
       await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
+
+      */
 
       let filters: { [key: string]: any } = {};
 
@@ -71,6 +74,8 @@ router.get('/:courseId', async (req: Request, res: Response) => {
           getTokenFromRequest(req) ?? ''
       )
       const username: string = decodedToken.username
+
+      /*
       const firstName: string = decodedToken.firstName
       const lastName: string = decodedToken.lastName
       const profilePicture: string = decodedToken.profilePicture
@@ -83,6 +88,7 @@ router.get('/:courseId', async (req: Request, res: Response) => {
       });
   
       await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
+      */
 
       const courseId = req.params.courseId;
       const course = await Course.findById(courseId);
@@ -107,6 +113,7 @@ router.get('/:courseId/classes', async (req: Request, res: Response) => {
           getTokenFromRequest(req) ?? ''
       )
       const username: string = decodedToken.username
+      /*
       const firstName: string = decodedToken.firstName
       const lastName: string = decodedToken.lastName
       const profilePicture: string = decodedToken.profilePicture
@@ -119,6 +126,7 @@ router.get('/:courseId/classes', async (req: Request, res: Response) => {
       });
   
       await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
+      */ 
       
       const courseId = req.params.courseId;
       const course = await Course.findById(courseId);
@@ -163,6 +171,8 @@ router.get('/:courseId/materials', async (req: Request, res: Response) => {
       let decodedToken: IUser = await getPayloadFromToken(
           getTokenFromRequest(req) ?? ''
       )
+
+      /*
       const username: string = decodedToken.username
       const firstName: string = decodedToken.firstName
       const lastName: string = decodedToken.lastName
@@ -176,7 +186,8 @@ router.get('/:courseId/materials', async (req: Request, res: Response) => {
       });
   
       await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
-      
+      */
+
       const courseId = req.params.courseId;
       const course = await Course.findById(courseId);
       if (course) {
@@ -221,6 +232,8 @@ router.post('/add', async (req: Request, res: Response) => {
         getTokenFromRequest(req) ?? ''
     )
     const username: string = decodedToken.username
+
+    /*
     const firstName: string = decodedToken.firstName
     const lastName: string = decodedToken.lastName
     const profilePicture: string = decodedToken.profilePicture
@@ -233,6 +246,7 @@ router.post('/add', async (req: Request, res: Response) => {
     });
 
     await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
+    */
 
     const { name, description, price, categories, language }: CourseFormInputs = req.body
 
@@ -269,6 +283,8 @@ router.put('/:courseId', async (req: Request, res: Response) => {
         getTokenFromRequest(req) ?? ''
     )
     const username: string = decodedToken.username
+
+    /*
     const firstName: string = decodedToken.firstName
     const lastName: string = decodedToken.lastName
     const profilePicture: string = decodedToken.profilePicture
@@ -281,6 +297,7 @@ router.put('/:courseId', async (req: Request, res: Response) => {
     });
 
     await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
+    */
     
     const { name, description, price, categories, language }: CourseFormInputs = req.body
     const courseId = req.params.courseId;
@@ -312,6 +329,8 @@ router.delete('/:courseId', async (req: Request, res: Response) => {
         getTokenFromRequest(req) ?? ''
     )
     const username: string = decodedToken.username
+
+    /*
     const firstName: string = decodedToken.firstName
     const lastName: string = decodedToken.lastName
     const profilePicture: string = decodedToken.profilePicture
@@ -324,7 +343,8 @@ router.delete('/:courseId', async (req: Request, res: Response) => {
     });
 
     await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
-    
+    */
+
     const courseId = req.params.courseId;
 
     const course = await Course.findById(courseId)
@@ -356,8 +376,6 @@ router.delete('/:courseId', async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 })
-
-
 
 router.get('/best', async (req: Request, res: Response) => {
   try {
