@@ -11,7 +11,13 @@ import { MaterliaziedView } from '../db/models/materializedView';
 
 const router = express.Router()
 
-router.get('/', async (req: Request, res: Response) => {
+router.get('/check', async (req: Request, res: Response) => {
+  return res
+      .status(200)
+      .json({ message: 'The courses service is working properly!' })
+})
+
+router.get('/list', async (req: Request, res: Response) => {
     try {
       let decodedToken: IUser = await getPayloadFromToken(
           getTokenFromRequest(req) ?? ''
@@ -209,7 +215,7 @@ router.get('/:courseId/materials', async (req: Request, res: Response) => {
     }
 })
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/add', async (req: Request, res: Response) => {
   try {
     let decodedToken: IUser = await getPayloadFromToken(
         getTokenFromRequest(req) ?? ''
@@ -361,12 +367,6 @@ router.get('/best', async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
-})
-
-router.get('/check', async (req: Request, res: Response) => {
-  return res
-      .status(200)
-      .json({ message: 'The courses service is working properly!' })
 })
 
 export default router
