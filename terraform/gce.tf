@@ -12,7 +12,7 @@ resource "google_compute_instance" "courses-service-instance" {
   }
 
   network_interface {
-    subnetwork = "fis-g4-network-cd"
+    subnetwork = google_compute_subnetwork.courses-service-subnetwork.id
 
     access_config {
     }

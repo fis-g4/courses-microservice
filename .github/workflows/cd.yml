@@ -48,11 +48,11 @@ jobs:
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
-        working-directory: ./terraform
+        working-directory: ./terraform 
 
       - name: Terraform Destroy
         id: destroy
-        run: terraform destroy -target=google_compute_instance.courses-service-instance -auto-approve -input=false -no-color
+        run: terraform destroy -target=google_compute_instance.courses-service-instance -auto-approve -input=false -no-color 
         working-directory: ./terraform
         continue-on-error: true
 

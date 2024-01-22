@@ -1,8 +1,8 @@
 import express, { Express, Request, Response } from 'express'
+import './loadEnvironment'
 import { receiveMessages } from './rabbitmq/operations'
 import cors from 'cors'
 import courses from './routes/courses'
-import './loadEnvironment'
 import './db/conn'
 import { generateToken, verifyToken } from './utils/jwtUtils'
 
@@ -14,6 +14,8 @@ app.use(cors())
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello World From the Courses Service!')
 })
+
+const URLS_ALLOWED_WITHOUT_TOKEN = ['/v1/courses/check']
 
 app.use((req, res, next) => {
 
@@ -44,15 +46,11 @@ app.use((req, res, next) => {
 
 const port = process.env.PORT ?? 8000
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
-
 const MICROSERVICE_QUEUE = 'courses_microservice'
 
 app.use('/v1/courses', courses)
 
-receiveMessages(MICROSERVICE_QUEUE)
+//receiveMessages(MICROSERVICE_QUEUE)
 
 app.listen(port, () => {
     console.info(`Courses microservice listening on port ${port}`)
