@@ -2,10 +2,12 @@ import request from 'supertest';
 import express from 'express';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import app from '../index';  
 import { Course } from '../db/models/course'
+import index from '../test_index';
 
 let mongod: any;
+
+const app = index.app
 
 const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImZpcnN0TmFtZSI6IkpvaG4iLCJsYXN0TmFtZSI6IkRvZSAyIiwidXNlcm5hbWUiOiJqb2huZG9lNDU4IiwiZW1haWwiOiJqb2huLmRvZUBleGFtcGxlNC5jb20iLCJwcm9maWxlUGljdHVyZSI6Imh0dHBzOi8vc3RvcmFnZS5nb29nbGVhcGlzLmNvbS9maXNnNC11c2VyLWltYWdlcy1idWNrZXQvZGVmYXVsdC11c2VyLmpwZyIsImNvaW5zQW1vdW50IjowLCJyb2xlIjoiVVNFUiIsInBsYW4iOiJQUk8ifSwiaWF0IjoxNzA2MDA4NDYyLCJleHAiOjE3MDYwOTQ4NjJ9.gq3kzKoJK1vidlTbCDJArnMQUPKCNl_JoDiguLqgkeU';
 
@@ -46,6 +48,11 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+    const server = index.server
+    if (server) {
+        await new Promise((resolve) => server.close(resolve));
+        console.log('Server closed');
+    }
   await mongoose.disconnect();
   await mongod.stop();
 });

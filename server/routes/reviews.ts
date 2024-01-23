@@ -164,7 +164,7 @@ try {
       await course.save();
     }
 
-    res.status(200).send(review);
+    res.status(201).send(review);
 } catch (error) {
     console.error(error);
     res.status(500).send('Error al actualizar la reseña');
