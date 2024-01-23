@@ -53,14 +53,25 @@ router.post('/new', async (req: Request, res: Response) => {
     const lastName: string = decodedToken.lastName
     const profilePicture: string = decodedToken.profilePicture
     
-    const materializedView = MaterliaziedView.build({
-      firstName: firstName,
-      lastName: lastName,
-      username: username,
-      profilePicture: profilePicture,
-    });
+    const materializedView = await MaterliaziedView.findOne({ username : username })
+    if (materializedView) {
+      materializedView.username = username;
+      materializedView.firstName = firstName;
+      materializedView.lastName = lastName;
+      materializedView.profilePicture = profilePicture;
 
-    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
+      await materializedView.save();
+    }
+    else {
+      const newMaterializedView = MaterliaziedView.build({
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        profilePicture: profilePicture,
+      });
+  
+      await newMaterializedView.save()
+    }
 
     const { name, description, price, categories, language }: CourseFormInputs = req.body
 
@@ -101,14 +112,25 @@ router.get('/list', async (req: Request, res: Response) => {
       const lastName: string = decodedToken.lastName
       const profilePicture: string = decodedToken.profilePicture
       
-      const materializedView = MaterliaziedView.build({
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        profilePicture: profilePicture,
-      });
-  
-      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
+      const materializedView = await MaterliaziedView.findOne({ username : username })
+      if (materializedView) {
+        materializedView.username = username;
+        materializedView.firstName = firstName;
+        materializedView.lastName = lastName;
+        materializedView.profilePicture = profilePicture;
+        
+        await materializedView.save();
+      }
+      else {
+        const newMaterializedView = MaterliaziedView.build({
+          firstName: firstName,
+          lastName: lastName,
+          username: username,
+          profilePicture: profilePicture,
+        });
+    
+        await newMaterializedView.save()
+      }
 
       let filters: { [key: string]: any } = {};
 
@@ -150,14 +172,25 @@ router.put('/:courseId', async (req: Request, res: Response) => {
     const lastName: string = decodedToken.lastName
     const profilePicture: string = decodedToken.profilePicture
     
-    const materializedView = MaterliaziedView.build({
-      firstName: firstName,
-      lastName: lastName,
-      username: username,
-      profilePicture: profilePicture,
-    });
-
-    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
+    const materializedView = await MaterliaziedView.findOne({ username : username })
+    if (materializedView) {
+      materializedView.username = username;
+      materializedView.firstName = firstName;
+      materializedView.lastName = lastName;
+      materializedView.profilePicture = profilePicture;
+      
+      await materializedView.save();
+    }
+    else {
+      const newMaterializedView = MaterliaziedView.build({
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        profilePicture: profilePicture,
+      });
+  
+      await newMaterializedView.save()
+    }
     
     const { name, description, price, categories, language }: CourseFormInputs = req.body
     const courseId = req.params.courseId;
@@ -194,14 +227,25 @@ router.delete('/:courseId', async (req: Request, res: Response) => {
     const lastName: string = decodedToken.lastName
     const profilePicture: string = decodedToken.profilePicture
     
-    const materializedView = MaterliaziedView.build({
-      firstName: firstName,
-      lastName: lastName,
-      username: username,
-      profilePicture: profilePicture,
-    });
-
-    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
+    const materializedView = await MaterliaziedView.findOne({ username : username })
+    if (materializedView) {
+      materializedView.username = username;
+      materializedView.firstName = firstName;
+      materializedView.lastName = lastName;
+      materializedView.profilePicture = profilePicture;
+      
+      await materializedView.save();
+    }
+    else {
+      const newMaterializedView = MaterliaziedView.build({
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        profilePicture: profilePicture,
+      });
+  
+      await newMaterializedView.save()
+    }
 
     const courseId = req.params.courseId;
 
@@ -246,14 +290,25 @@ router.get('/:courseId', async (req: Request, res: Response) => {
       const lastName: string = decodedToken.lastName
       const profilePicture: string = decodedToken.profilePicture
       
-      const materializedView = MaterliaziedView.build({
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        profilePicture: profilePicture,
-      });
-  
-      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
+      const materializedView = await MaterliaziedView.findOne({ username : username })
+      if (materializedView) {
+        materializedView.username = username;
+        materializedView.firstName = firstName;
+        materializedView.lastName = lastName;
+        materializedView.profilePicture = profilePicture;
+        
+        await materializedView.save();
+      }
+      else {
+        const newMaterializedView = MaterliaziedView.build({
+          firstName: firstName,
+          lastName: lastName,
+          username: username,
+          profilePicture: profilePicture,
+        });
+    
+        await newMaterializedView.save()
+      }
 
       const courseId = req.params.courseId;
       const course = await Course.findById(courseId);
@@ -283,14 +338,25 @@ router.get('/:courseId/classes', async (req: Request, res: Response) => {
       const lastName: string = decodedToken.lastName
       const profilePicture: string = decodedToken.profilePicture
       
-      const materializedView = MaterliaziedView.build({
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        profilePicture: profilePicture,
-      });
-  
-      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
+      const materializedView = await MaterliaziedView.findOne({ username : username })
+      if (materializedView) {
+        materializedView.username = username;
+        materializedView.firstName = firstName;
+        materializedView.lastName = lastName;
+        materializedView.profilePicture = profilePicture;
+        
+        await materializedView.save();
+      }
+      else {
+        const newMaterializedView = MaterliaziedView.build({
+          firstName: firstName,
+          lastName: lastName,
+          username: username,
+          profilePicture: profilePicture,
+        });
+    
+        await newMaterializedView.save()
+      }
       
       const courseId = req.params.courseId;
       const course = await Course.findById(courseId);
@@ -341,14 +407,25 @@ router.get('/:courseId/materials', async (req: Request, res: Response) => {
       const lastName: string = decodedToken.lastName
       const profilePicture: string = decodedToken.profilePicture
       
-      const materializedView = MaterliaziedView.build({
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        profilePicture: profilePicture,
-      });
-  
-      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
+      const materializedView = await MaterliaziedView.findOne({ username : username })
+      if (materializedView) {
+        materializedView.username = username;
+        materializedView.firstName = firstName;
+        materializedView.lastName = lastName;
+        materializedView.profilePicture = profilePicture;
+        
+        await materializedView.save();
+      }
+      else {
+        const newMaterializedView = MaterliaziedView.build({
+          firstName: firstName,
+          lastName: lastName,
+          username: username,
+          profilePicture: profilePicture,
+        });
+    
+        await newMaterializedView.save()
+      }
 
       const courseId = req.params.courseId;
       const course = await Course.findById(courseId);
