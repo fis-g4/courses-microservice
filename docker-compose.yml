@@ -12,9 +12,9 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - communication-microservice_communication-network
+      - courses-network
 
-  mongo-db:
+  mongo_db:
     image: mongo:6.0
     container_name: mongo-db
     environment:
@@ -26,7 +26,7 @@ services:
     volumes:
       - db:/data/db
     networks:
-      - communication-microservice_communication-network
+      - courses-network
 
   server:
     restart: always
@@ -54,17 +54,15 @@ services:
     #   - static:/usr/src/app/flatter-backend/media
     expose:
       - 8000
-    ports:
-      - 8000:8000
     depends_on:
       - mongo_db
       - redis
     links:
       - redis
-    networks:
-      - communication-microservice_communication-network
     env_file:
-      - server/.env.dev #TODO: Change
+      - .env
+    networks:
+      - courses-network
 
   nginx:
     restart: always
@@ -82,7 +80,7 @@ services:
       - server
       - mongo_db
     networks:
-      - communication-microservice_communication-network
+      - courses-network
 
 # volumes:
 #   static:
@@ -94,8 +92,13 @@ volumes:
   db:
     name: courses-microservice-db
   redis-data:
-    name: learning-microservice-redis-data
+    name: courses-microservice-redis-data
 
 networks:
-  communication-microservice_communication-network:
-    external: true
+  courses-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.6.0.0/16
+  

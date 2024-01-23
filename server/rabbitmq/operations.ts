@@ -1,6 +1,7 @@
 import amqplib, { Channel, Connection } from 'amqplib'
 import axios from 'axios'
 import { Course } from '../db/models/course'
+import { Review } from '../db/models/review'
 import redisClient from '../db/redis'
 import { MaterliaziedView } from '../db/models/materializedView'
 
@@ -15,7 +16,7 @@ async function sendMessage(
 ) {
     try {
         await axios.post(
-            `http://${process.env.DOCKER_HOST}:8080/api/v1/messages/${dest}`,
+            `https://${process.env.API_DOMAIN}/v1/messages/${dest}`,
             {
                 operationId,
                 message,
@@ -34,7 +35,7 @@ async function sendMessage(
 
 async function receiveMessages(queue: string) {
     try {
-        const amqpServer = `amqp://${process.env.RABBITMQ_USER}:${process.env.RABBITMQ_PASSWORD}@rabbitmq:5672`
+        const amqpServer = `amqp://${process.env.RABBITMQ_USER}:${process.env.RABBITMQ_PASSWORD}@34.163.248.83:5672`
         connection = await amqplib.connect(amqpServer)
         channel = await connection.createChannel()
         await channel.consume(queue, (data) => {
@@ -128,17 +129,36 @@ async function handleMessages(message: string) {
             courseIds,
         }
 
-        /*
-        await sendMessage(
-            'learning-microservice',
-            'notificationDeleteManyCourses',
-            process.env.API_KEY ?? '',
-            JSON.stringify(data)
-        )
-        */
-
         await Course.deleteMany({ creator : deletedUsername })
         await MaterliaziedView.deleteMany({ username : deletedUsername })
+    } else if (operationId === 'requestMaterialReviews') {
+        const materialId = messageContent.materialId
+        
+        const reviews = await Review.find({ material : materialId })
+
+        let review = 3
+
+        let total_rating = 0
+        let total_reviews = 0
+        for (let review_unit of reviews) {
+            total_rating += review_unit.rating
+            total_reviews += 1
+        }
+        if (total_reviews != 0) {
+            review = total_rating / total_reviews
+        }
+
+        const message = JSON.stringify({
+            materialId,
+            review,
+        })
+
+        await sendMessage(
+            'learning-microservice',
+            'responseMaterialReviews',
+            process.env.API_KEY ?? '',
+            message
+        )
     }
 }
 
