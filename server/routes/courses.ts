@@ -17,6 +17,67 @@ router.get('/check', async (req: Request, res: Response) => {
       .json({ message: 'The courses service is working properly!' })
 })
 
+router.get('/best', async (req: Request, res: Response) => {
+  try {
+    const courses = await Course.find().sort({ score: -1 }).limit(6);
+
+    return res.status(200).json(courses);
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+})
+
+router.post('/new', async (req: Request, res: Response) => {
+  try {
+    let decodedToken: IUser = await getPayloadFromToken(
+        getTokenFromRequest(req) ?? ''
+    )
+    const username: string = decodedToken.username
+
+    /*
+    const firstName: string = decodedToken.firstName
+    const lastName: string = decodedToken.lastName
+    const profilePicture: string = decodedToken.profilePicture
+    
+    const materializedView = MaterliaziedView.build({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      profilePicture: profilePicture,
+    });
+
+    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
+    */
+
+    const { name, description, price, categories, language }: CourseFormInputs = req.body
+
+    const course = Course.build({
+      name: name, 
+      description: description, 
+      price: price,
+      categories: categories,
+      language: language,
+      creator: username,
+      score: 3,
+      access: [],
+      classes: [],
+      materials: [],
+    });
+
+    await course.save();
+
+    return res.status(201).send('Course created!')
+  } catch (error) {
+    //@ts-ignore
+    if (error.errors) {
+      return res.status(400).json({ error: 'Validation error when saving' });
+    }
+    else {
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+})
+
 router.get('/list', async (req: Request, res: Response) => {
     try {
       let decodedToken: IUser = await getPayloadFromToken(
@@ -66,6 +127,106 @@ router.get('/list', async (req: Request, res: Response) => {
     } catch (error) {
       return res.status(500).json({ error: 'Internal Server Error' });
     }
+})
+
+router.put('/:courseId', async (req: Request, res: Response) => {
+  try {
+    let decodedToken: IUser = await getPayloadFromToken(
+        getTokenFromRequest(req) ?? ''
+    )
+    const username: string = decodedToken.username
+
+    /*
+    const firstName: string = decodedToken.firstName
+    const lastName: string = decodedToken.lastName
+    const profilePicture: string = decodedToken.profilePicture
+    
+    const materializedView = MaterliaziedView.build({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      profilePicture: profilePicture,
+    });
+
+    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
+    */
+    
+    const { name, description, price, categories, language }: CourseFormInputs = req.body
+    const courseId = req.params.courseId;
+  
+    var course = await Course.findById(courseId);
+    if (course) {
+      course.name = name;
+      course.description = description;
+      course.price = price;
+      course.categories = categories;
+      course.language = language;
+      course.creator = username;
+  
+      await course.save();
+    
+      return res.status(201).json(course)
+    }
+    else {
+      return res.status(404).json(course)
+    }
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+})
+
+router.delete('/:courseId', async (req: Request, res: Response) => {
+  try {
+    let decodedToken: IUser = await getPayloadFromToken(
+        getTokenFromRequest(req) ?? ''
+    )
+    const username: string = decodedToken.username
+
+    /*
+    const firstName: string = decodedToken.firstName
+    const lastName: string = decodedToken.lastName
+    const profilePicture: string = decodedToken.profilePicture
+    
+    const materializedView = MaterliaziedView.build({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      profilePicture: profilePicture,
+    });
+
+    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
+    */
+
+    const courseId = req.params.courseId;
+
+    const course = await Course.findById(courseId)
+    let classIds: string[] = []
+    let materialIds: string[] = []
+
+    if (course) {
+        classIds = course.classes
+        materialIds = course.materials
+    }
+
+    const data = {
+        courseId,
+        classIds,
+        materialIds,
+    }
+
+    await sendMessage(
+        'learning-microservice',
+        'notificationDeleteCourse',
+        process.env.API_KEY ?? '',
+        JSON.stringify(data)
+    )
+  
+    await Course.deleteOne({ _id : courseId })
+    
+    return res.status(200).send("Course deleted!")
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
 })
 
 router.get('/:courseId', async (req: Request, res: Response) => {
@@ -225,166 +386,4 @@ router.get('/:courseId/materials', async (req: Request, res: Response) => {
       }
     }
 })
-
-router.post('/add', async (req: Request, res: Response) => {
-  try {
-    let decodedToken: IUser = await getPayloadFromToken(
-        getTokenFromRequest(req) ?? ''
-    )
-    const username: string = decodedToken.username
-
-    /*
-    const firstName: string = decodedToken.firstName
-    const lastName: string = decodedToken.lastName
-    const profilePicture: string = decodedToken.profilePicture
-    
-    const materializedView = MaterliaziedView.build({
-      firstName: firstName,
-      lastName: lastName,
-      username: username,
-      profilePicture: profilePicture,
-    });
-
-    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
-    */
-
-    const { name, description, price, categories, language }: CourseFormInputs = req.body
-
-    const course = Course.build({
-      name: name, 
-      description: description, 
-      price: price,
-      categories: categories,
-      language: language,
-      creator: username,
-      score: 3,
-      access: [],
-      classes: [],
-      materials: [],
-    });
-
-    await course.save();
-
-    return res.status(201).send('Course created!')
-  } catch (error) {
-    //@ts-ignore
-    if (error.errors) {
-      return res.status(400).json({ error: 'Validation error when saving' });
-    }
-    else {
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
-  }
-})
-
-router.put('/:courseId', async (req: Request, res: Response) => {
-  try {
-    let decodedToken: IUser = await getPayloadFromToken(
-        getTokenFromRequest(req) ?? ''
-    )
-    const username: string = decodedToken.username
-
-    /*
-    const firstName: string = decodedToken.firstName
-    const lastName: string = decodedToken.lastName
-    const profilePicture: string = decodedToken.profilePicture
-    
-    const materializedView = MaterliaziedView.build({
-      firstName: firstName,
-      lastName: lastName,
-      username: username,
-      profilePicture: profilePicture,
-    });
-
-    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
-    */
-    
-    const { name, description, price, categories, language }: CourseFormInputs = req.body
-    const courseId = req.params.courseId;
-  
-    var course = await Course.findById(courseId);
-    if (course) {
-      course.name = name;
-      course.description = description;
-      course.price = price;
-      course.categories = categories;
-      course.language = language;
-      course.creator = username;
-  
-      await course.save();
-    
-      return res.status(201).json(course)
-    }
-    else {
-      return res.status(404).json(course)
-    }
-  } catch (error) {
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-})
-
-router.delete('/:courseId', async (req: Request, res: Response) => {
-  try {
-    let decodedToken: IUser = await getPayloadFromToken(
-        getTokenFromRequest(req) ?? ''
-    )
-    const username: string = decodedToken.username
-
-    /*
-    const firstName: string = decodedToken.firstName
-    const lastName: string = decodedToken.lastName
-    const profilePicture: string = decodedToken.profilePicture
-    
-    const materializedView = MaterliaziedView.build({
-      firstName: firstName,
-      lastName: lastName,
-      username: username,
-      profilePicture: profilePicture,
-    });
-
-    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
-    */
-
-    const courseId = req.params.courseId;
-
-    const course = await Course.findById(courseId)
-    let classIds: string[] = []
-    let materialIds: string[] = []
-
-    if (course) {
-        classIds = course.classes
-        materialIds = course.materials
-    }
-
-    const data = {
-        courseId,
-        classIds,
-        materialIds,
-    }
-
-    await sendMessage(
-        'learning-microservice',
-        'notificationDeleteCourse',
-        process.env.API_KEY ?? '',
-        JSON.stringify(data)
-    )
-  
-    await Course.deleteOne({ _id : courseId })
-    
-    return res.status(200).send("Course deleted!")
-  } catch (error) {
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-})
-
-router.get('/best', async (req: Request, res: Response) => {
-  try {
-    const courses = await Course.find().sort({ score: -1 }).limit(6);
-
-    return res.status(200).json(courses);
-  } catch (error) {
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-})
-
 export default router
