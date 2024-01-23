@@ -21,7 +21,22 @@ router.get('/best', async (req: Request, res: Response) => {
   try {
     const courses = await Course.find().sort({ score: -1 }).limit(6);
 
-    return res.status(200).json(courses);
+    const modifiedCourses = await Promise.all(courses.map(async course => {
+      const user = await MaterliaziedView.findOne({ username: course.creator });
+      if (user) {
+        return {
+          ...course.toObject(), // Convert Mongoose document to plain JavaScript object
+          creator: user.firstName + " " + user.lastName // Change 'newUsername' to the desired value
+        };
+      }
+      else {
+        return {
+          course
+        };
+      }
+    }))
+
+    return res.status(200).json(modifiedCourses);
   } catch (error) {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
@@ -34,7 +49,6 @@ router.post('/new', async (req: Request, res: Response) => {
     )
     const username: string = decodedToken.username
 
-    /*
     const firstName: string = decodedToken.firstName
     const lastName: string = decodedToken.lastName
     const profilePicture: string = decodedToken.profilePicture
@@ -47,7 +61,6 @@ router.post('/new', async (req: Request, res: Response) => {
     });
 
     await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
-    */
 
     const { name, description, price, categories, language }: CourseFormInputs = req.body
 
@@ -84,7 +97,6 @@ router.get('/list', async (req: Request, res: Response) => {
           getTokenFromRequest(req) ?? ''
       )
       const username: string = decodedToken.username
-      /*
       const firstName: string = decodedToken.firstName
       const lastName: string = decodedToken.lastName
       const profilePicture: string = decodedToken.profilePicture
@@ -96,9 +108,7 @@ router.get('/list', async (req: Request, res: Response) => {
         profilePicture: profilePicture,
       });
   
-      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
-
-      */
+      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
 
       let filters: { [key: string]: any } = {};
 
@@ -136,7 +146,6 @@ router.put('/:courseId', async (req: Request, res: Response) => {
     )
     const username: string = decodedToken.username
 
-    /*
     const firstName: string = decodedToken.firstName
     const lastName: string = decodedToken.lastName
     const profilePicture: string = decodedToken.profilePicture
@@ -148,8 +157,7 @@ router.put('/:courseId', async (req: Request, res: Response) => {
       profilePicture: profilePicture,
     });
 
-    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
-    */
+    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
     
     const { name, description, price, categories, language }: CourseFormInputs = req.body
     const courseId = req.params.courseId;
@@ -182,7 +190,6 @@ router.delete('/:courseId', async (req: Request, res: Response) => {
     )
     const username: string = decodedToken.username
 
-    /*
     const firstName: string = decodedToken.firstName
     const lastName: string = decodedToken.lastName
     const profilePicture: string = decodedToken.profilePicture
@@ -194,8 +201,7 @@ router.delete('/:courseId', async (req: Request, res: Response) => {
       profilePicture: profilePicture,
     });
 
-    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
-    */
+    await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
 
     const courseId = req.params.courseId;
 
@@ -236,7 +242,6 @@ router.get('/:courseId', async (req: Request, res: Response) => {
       )
       const username: string = decodedToken.username
 
-      /*
       const firstName: string = decodedToken.firstName
       const lastName: string = decodedToken.lastName
       const profilePicture: string = decodedToken.profilePicture
@@ -248,8 +253,7 @@ router.get('/:courseId', async (req: Request, res: Response) => {
         profilePicture: profilePicture,
       });
   
-      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
-      */
+      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
 
       const courseId = req.params.courseId;
       const course = await Course.findById(courseId);
@@ -274,7 +278,7 @@ router.get('/:courseId/classes', async (req: Request, res: Response) => {
           getTokenFromRequest(req) ?? ''
       )
       const username: string = decodedToken.username
-      /*
+      
       const firstName: string = decodedToken.firstName
       const lastName: string = decodedToken.lastName
       const profilePicture: string = decodedToken.profilePicture
@@ -286,8 +290,7 @@ router.get('/:courseId/classes', async (req: Request, res: Response) => {
         profilePicture: profilePicture,
       });
   
-      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
-      */ 
+      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
       
       const courseId = req.params.courseId;
       const course = await Course.findById(courseId);
@@ -333,7 +336,6 @@ router.get('/:courseId/materials', async (req: Request, res: Response) => {
           getTokenFromRequest(req) ?? ''
       )
 
-      /*
       const username: string = decodedToken.username
       const firstName: string = decodedToken.firstName
       const lastName: string = decodedToken.lastName
@@ -346,8 +348,7 @@ router.get('/:courseId/materials', async (req: Request, res: Response) => {
         profilePicture: profilePicture,
       });
   
-      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView);
-      */
+      await MaterliaziedView.findOneAndUpdate({ username : username }, materializedView, { upsert: true });
 
       const courseId = req.params.courseId;
       const course = await Course.findById(courseId);
