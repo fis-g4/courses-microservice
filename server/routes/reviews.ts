@@ -164,7 +164,7 @@ try {
   
   // Verificar si el creador (usuario) existe en la base de datos
   if (req.body.creator) {
-    const userExists = await User.exists({ _id: req.body.creator });
+    const userExists = await User.exists({ username: req.body.creator });
     if (!userExists) {
       return res.status(404).send('El usuario no existe en la base de datos');
     }
