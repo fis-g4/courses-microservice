@@ -204,7 +204,6 @@ try {
 //Buscar reseñas por el id del usuario (profesor)
 router.get('/user/:username', async (req, res) => {
 try {
-    console.log("Se buscan usuarios");
     const reviews = await Review.find({ user: req.params.username });
     res.status(200).send(reviews);
 } catch (error) {
@@ -216,7 +215,6 @@ try {
 //Buscar reseñas por el id del usuario (creador reseña)
 router.get('/creator/:username', async (req, res) => {
   try {
-      console.log("Se buscan creadores");
       const reviews = await Review.find({ creator: req.params.username });
       res.status(200).send(reviews);
   } catch (error) {
