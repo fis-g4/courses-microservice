@@ -386,5 +386,4 @@ router.get('/:courseId/materials', async (req: Request, res: Response) => {
       }
     }
 })
-
 export default router

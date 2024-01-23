@@ -1,6 +1,7 @@
 import amqplib, { Channel, Connection } from 'amqplib'
 import axios from 'axios'
 import { Course } from '../db/models/course'
+import { Review } from '../db/models/review'
 import redisClient from '../db/redis'
 import { MaterliaziedView } from '../db/models/materializedView'
 
@@ -128,17 +129,36 @@ async function handleMessages(message: string) {
             courseIds,
         }
 
-        /*
-        await sendMessage(
-            'learning-microservice',
-            'notificationDeleteManyCourses',
-            process.env.API_KEY ?? '',
-            JSON.stringify(data)
-        )
-        */
-
         await Course.deleteMany({ creator : deletedUsername })
         await MaterliaziedView.deleteMany({ username : deletedUsername })
+    } else if (operationId === 'requestMaterialReviews') {
+        const materialId = messageContent.materialId
+        
+        const reviews = await Review.find({ material : materialId })
+
+        let review = 3
+
+        let total_rating = 0
+        let total_reviews = 0
+        for (let review_unit of reviews) {
+            total_rating += review_unit.rating
+            total_reviews += 1
+        }
+        if (total_reviews != 0) {
+            review = total_rating / total_reviews
+        }
+
+        const message = JSON.stringify({
+            materialId,
+            review,
+        })
+
+        await sendMessage(
+            'learning-microservice',
+            'responseMaterialReviews',
+            process.env.API_KEY ?? '',
+            message
+        )
     }
 }
 

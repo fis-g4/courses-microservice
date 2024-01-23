@@ -3,7 +3,7 @@ import { IUser } from './user';
 
 const { Schema } = mongoose
 
-interface ICourse{
+export interface ICourse{
     name: string;
     description: string;
     price: number;
@@ -11,7 +11,7 @@ interface ICourse{
     language: string;
     creator: string;
     score: number;
-    access: IUser[];
+    access: string[];
     classes: string[];
     materials: string[];
 }
@@ -24,7 +24,7 @@ interface CourseDoc extends mongoose.Document {
     language: string;
     creator: string;
     score: number;
-    access: IUser[];
+    access: string[];
     classes: string[];
     materials: string[];
 }
@@ -64,7 +64,7 @@ const courseSchema = new Schema({
         default: 3,
     },
     access: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: [String],
         required: true,
     },
     classes: {
