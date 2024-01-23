@@ -1,7 +1,4 @@
 import mongoose from 'mongoose'
-import { ICourse } from './course';
-import { IUser } from './user';
-import { IMaterial } from './material';
 const { Schema } = mongoose
 
 enum TypeReview{
@@ -51,14 +48,17 @@ const reviewSchema = new Schema({
         //required: true,
     },
     course: {
-        type: String,
+        type: String || '',
     },
     creator: {
         type: String,
     },
     material: {
-        type: String,
+        type: String || '',
     },
+    user:{
+        type: String || ''
+    }
 })
 
 reviewSchema.statics.build = (review: IReview) => {

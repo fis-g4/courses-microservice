@@ -42,29 +42,6 @@ router.post('/new', async (req, res) => {
       return res.status(400).send('ID de material no válido');
     }
 
-    // Verificar si el curso existe en la base de datos
-    if (req.body.course) {
-      const courseExists = await Course.exists({ _id: req.body.course });
-      if (!courseExists) {
-        return res.status(404).send('El curso no existe en la base de datos');
-      }
-    }
-
-    // Verificar si el creador (usuario) existe en la base de datos
-    if (req.body.creator) {
-      const userExists = await User.exists({ username: req.body.creator });
-      if (!userExists) {
-        return res.status(404).send('El usuario no existe en la base de datos'); 
-      }
-    }
-
-    // Verificar si el material existe en la base de datos
-    if (req.body.material) {
-      const materialExists = await Material.exists({ _id: req.body.material });
-      if (!materialExists) {
-        return res.status(404).send('El material no existe en la base de datos');
-      }
-    }
     // Si todas las validaciones son exitosas, construir y guardar la revisión
     const review = Review.build({
       type: req.body.type,
@@ -72,27 +49,30 @@ router.post('/new', async (req, res) => {
       title: req.body.title, 
       description: req.body.description, 
       rating: req.body.rating,
-      course: req.body.string,
-      material: req.body.string,
+      course: req.body.course,
+      material: req.body.material,
       creator: username
     });
     await review.save();
-    const courseId = req.body.course;
-    const course = await Course.findById(courseId);
-    if (course) {
-      const reviews = await Review.find({ course : courseId })
+    if(req.body.type === 'COURSE'){
+      const courseId = req.body.course;
+      const course = await Course.findById(courseId);
+      if (course) {
+        const reviews = await Review.find({ course : courseId })
 
-      let total_rating = 0
-      let total_reviews = 0
-      for (let review of reviews) {
-          total_rating += review.rating
-          total_reviews += 1
-      }
-      if (total_reviews > 0) {
-        course.score = total_rating / total_reviews;
-      }
-      await course.save();
+        let total_rating = 0
+        let total_reviews = 0
+        for (let review of reviews) {
+            total_rating += review.rating
+            total_reviews += 1
+        }
+        if (total_reviews > 0) {
+          course.score = total_rating / total_reviews;
+        }
+        await course.save();
     }
+    }
+    
     res.status(201).send(review);
   } catch (error) {
     console.error(error);
@@ -150,30 +130,7 @@ try {
   if (req.body.material && !mongoose.isValidObjectId(req.body.material)) {
     return res.status(400).send('ID de material no válido');
   }
-
-  // Verificar si el curso existe en la base de datos
-  if (req.body.course) {
-    const courseExists = await Course.exists({ _id: req.body.course });
-    if (!courseExists) {
-      return res.status(404).send('El curso no existe en la base de datos');
-    }
-  }
-
-  // Verificar si el creador (usuario) existe en la base de datos
-  if (req.body.creator) {
-    const userExists = await User.exists({ _id: req.body.creator });
-    if (!userExists) {
-      return res.status(404).send('El usuario no existe en la base de datos');
-    }
-  }
-
-  // Verificar si el material existe en la base de datos
-  if (req.body.material) {
-    const materialExists = await Material.exists({ _id: req.body.material });
-    if (!materialExists) {
-      return res.status(404).send('El material no existe en la base de datos');
-    }
-  }
+ 
     const review = await Review.findById(req.params.id);
     if (!review) {
     return res.status(404).send('Reseña no encontrada');
@@ -258,4 +215,3 @@ try {
 
 
 export default router
-
