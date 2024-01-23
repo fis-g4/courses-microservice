@@ -61,14 +61,7 @@ function populateUsers() {
 }
 
 function populateReviews() {
-    Review.build({
-        title: "Muy buena profesora",
-        description: "Me ha gustado mucho",
-        score: 5,
-        course: "null",
-        creator: "null",
-        material: "null",     
-    }).save();
+    
 }
 
 async function populateDB() {

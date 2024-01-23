@@ -138,14 +138,14 @@ async function handleMessages(message: string) {
 
         let review = 3
 
-        let total_score = 0
+        let total_rating = 0
         let total_reviews = 0
         for (let review_unit of reviews) {
-            total_score += review_unit.score
+            total_rating += review_unit.rating
             total_reviews += 1
         }
         if (total_reviews != 0) {
-            review = total_score / total_reviews
+            review = total_rating / total_reviews
         }
 
         const message = JSON.stringify({

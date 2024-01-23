@@ -4,21 +4,31 @@ import { IUser } from './user';
 import { IMaterial } from './material';
 const { Schema } = mongoose
 
+enum TypeReview{
+    USER = 'USER',
+    COURSE = 'COURSE',
+    MATERIAL = 'MATERIAL'
+}
+
 interface IReview{
-    title: string;
-    description: string;
-    score: number;
-    course: string;
-    creator: string;
-    material: string;
+    type: TypeReview
+    user: string
+    creator: string
+    title: string
+    description: string
+    rating: number
+    course: string
+    material: string
 }
 
 interface ReviewDoc extends mongoose.Document {
+    type: TypeReview;
+    user: string;
+    creator: string;
     title: string;
     description: string;
-    score: number;
+    rating: number;
     course: string;
-    creator: string;
     material: string;
 }
 
@@ -36,8 +46,8 @@ const reviewSchema = new Schema({
         type: String,
         //required: true,
     },
-    score: {
-        type: Number,
+    rating: {
+        type: String,
         //required: true,
     },
     course: {

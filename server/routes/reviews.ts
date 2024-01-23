@@ -16,6 +16,7 @@ const router = express.Router()
 
 //Ruta para crear las reviews, body: title, description, score, material, user, course
 router.post('/new', async (req, res) => {
+  console.log("Se empieza a procesar el post");
   try {
     let decodedToken: IUser = await getPayloadFromToken(
       getTokenFromRequest(req) ?? ''
@@ -27,17 +28,17 @@ router.post('/new', async (req, res) => {
     }
 
     // Validar la existencia del curso
-    if (req.body.course && !mongoose.isValidObjectId(req.body.course)) {
+    if (req.body.type === 'COURSE' && req.body.course && !mongoose.isValidObjectId(req.body.course)) {
       return res.status(400).send('ID de curso no válido');
     }
 
     // Validar la existencia del creador (usuario)
-    if (req.body.creator && !mongoose.isValidObjectId(req.body.creator)) {
+    if (req.body.creator === null || req.body.creator === '' ) {
       return res.status(400).send('ID de usuario no válido');
     }
 
     // Validar la existencia del material
-    if (req.body.material && !mongoose.isValidObjectId(req.body.material)) {
+    if (req.body.type === 'MATERIAL' && req.body.material && !mongoose.isValidObjectId(req.body.material)) {
       return res.status(400).send('ID de material no válido');
     }
 
@@ -51,9 +52,9 @@ router.post('/new', async (req, res) => {
 
     // Verificar si el creador (usuario) existe en la base de datos
     if (req.body.creator) {
-      const userExists = await User.exists({ _id: req.body.creator });
+      const userExists = await User.exists({ username: req.body.creator });
       if (!userExists) {
-        return res.status(404).send('El usuario no existe en la base de datos');
+        return res.status(404).send('El usuario no existe en la base de datos'); 
       }
     }
 
@@ -66,11 +67,13 @@ router.post('/new', async (req, res) => {
     }
     // Si todas las validaciones son exitosas, construir y guardar la revisión
     const review = Review.build({
+      type: req.body.type,
+      user: req.body.user,
       title: req.body.title, 
       description: req.body.description, 
-      score: req.body.score,
-      course: req.body.course,
-      material: req.body.material,
+      rating: req.body.rating,
+      course: req.body.string,
+      material: req.body.string,
       creator: username
     });
     await review.save();
@@ -79,14 +82,14 @@ router.post('/new', async (req, res) => {
     if (course) {
       const reviews = await Review.find({ course : courseId })
 
-      let total_score = 0
+      let total_rating = 0
       let total_reviews = 0
       for (let review of reviews) {
-          total_score += review.score
+          total_rating += review.rating
           total_reviews += 1
       }
       if (total_reviews > 0) {
-        course.score = total_score / total_reviews;
+        course.score = total_rating / total_reviews;
       }
       await course.save();
     }
@@ -192,14 +195,14 @@ try {
     if (course) {
       const reviews = await Review.find({ course : courseId })
 
-      let total_score = 0
+      let total_rating = 0
       let total_reviews = 0
       for (let review of reviews) {
-          total_score += review.score
+          total_rating += review.rating
           total_reviews += 1
       }
       if (total_reviews > 0) {
-        course.score = total_score / total_reviews;
+        course.score = total_rating / total_reviews;
       }
       await course.save();
     }
@@ -232,6 +235,7 @@ try {
 
 router.get('/course/:courseId', async (req, res) => {
 try {
+    console.log('Populating DB...');
     const reviews = await Review.find({ course: req.params.courseId });
     res.status(200).send(reviews);
 } catch (error) {
