@@ -57,3 +57,5 @@ receiveMessages(MICROSERVICE_QUEUE)
 app.listen(port, () => {
     console.info(`Courses microservice listening on port ${port}`)
 })
+
+export default app;

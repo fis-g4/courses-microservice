@@ -1,7 +1,7 @@
 import { redis } from './config'
 import { createClient } from 'redis'
 
-const redisURL = `redis://:${redis.password}@${redis.host}:${redis.port}`
+const redisURL = `redis://${redis.host}:${redis.port}`
 
 const client = createClient({ url: redisURL })
 
