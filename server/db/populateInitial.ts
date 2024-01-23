@@ -72,8 +72,7 @@ async function populateDB() {
 
         User.collection.countDocuments().then((count) => {
             if (count === 0) {
-                populateUsers()
-                populateReviews()
+                
             }
         })
     }else if(process.env.npm_config_run_tests=== 'true'){

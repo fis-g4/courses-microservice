@@ -3,7 +3,7 @@ import axios from 'axios'
 import { Course } from '../db/models/course'
 import { Review } from '../db/models/review'
 import redisClient from '../db/redis'
-import { MaterliaziedView } from '../db/models/materializedView'
+import { MaterializedView } from '../db/models/materializedView'
 
 let channel: Channel, connection: Connection
 const FIVE_HOURS = 60 * 60 * 5
@@ -130,7 +130,7 @@ async function handleMessages(message: string) {
         }
 
         await Course.deleteMany({ creator : deletedUsername })
-        await MaterliaziedView.deleteMany({ username : deletedUsername })
+        await MaterializedView.deleteMany({ username : deletedUsername })
     } else if (operationId === 'requestMaterialReviews') {
         const materialId = messageContent.materialId
         

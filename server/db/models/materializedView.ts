@@ -56,9 +56,9 @@ const materializedViewSchema = new Schema(
 )
 
 materializedViewSchema.statics.build = (user: IMaterializedView) => {
-    return new MaterliaziedView(user)
+    return new MaterializedView(user)
 }
 
-const MaterliaziedView = mongoose.model<MaterializedViewDoc, MaterializedViewInterface>('MaterializedView', materializedViewSchema)
+const MaterializedView = mongoose.model<MaterializedViewDoc, MaterializedViewInterface>('MaterializedView', materializedViewSchema)
 
-export { MaterliaziedView }
+export { MaterializedView }
