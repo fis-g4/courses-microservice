@@ -136,4 +136,43 @@ it('should delete a course for /:courseId endpoint', async () => {
   expect(response.text).toBe('Course deleted!');
 });
 
-// Repeat the describe block for each endpoint you want to test
+  it('should return an error for /new endpoint if user attempts to create a course with a word for its price', async () => {
+    const response = await request(app)
+      .post('/v1/courses/new')
+      .send({
+        name: 'New Course',
+        description: 'A new course',
+        price: "hello world",
+        categories: ['Category1', 'Category2'],
+        language: 'English',
+      });
+    expect(response.status).toBe(401);
+    // Add more expectations based on your error handling
+  });
+  
+  it('should return an error for /:courseId endpoint if the course ID is invalid', async () => {
+    const response = await request(app).get('/v1/courses/invalidCourseId').set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(404);
+    // Add more expectations based on your error handling
+  });
+
+  it('should return an error for /:courseId endpoint if the course ID is invalid', async () => {
+    const response = await request(app)
+      .put('/v1/courses/invalidCourseId')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: 'Updated Course',
+        description: 'An updated course',
+        price: 24.99,
+        categories: ['UpdatedCategory'],
+        language: 'Spanish',
+      });
+    expect(response.status).toBe(404);
+    // Add more expectations based on your error handling
+  });
+
+  it('should return an error for /:courseId endpoint if the course ID is invalid', async () => {
+    const response = await request(app).delete('/v1/courses/invalidCourseId').set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(404);
+    // Add more expectations based on your error handling
+  });
