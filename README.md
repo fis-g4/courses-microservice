@@ -8,6 +8,8 @@ The reviews-microservice has been integrated from the following repository: http
 
 The reviews-microservice was integrated in the following commit: https://github.com/fis-g4/courses-microservice/commit/264f6a1a6d41b99ab7c508045dd71a6a4f8a9e0f
 
+Please do check said repository in order to see the commits that had been done there before the integration of services.
+
 # Local deployment, testing and swagger documentation
 
 For local deployment, it's convenient to remove the password demand in the file /server/db/redis.ts:
