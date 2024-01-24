@@ -5,32 +5,44 @@ import mongoose from 'mongoose';
 import { Course } from '../db/models/course'
 import { Review } from '../db/models/review'
 import index from '../test_index';
-import axios from 'axios';
-
-async function obtainToken(username: string, password: string): Promise<string> {
-  const apiUrl = 'https://api.javiercavlop.com/v1/users/login';
-
-  const loginCredentials = {
-    username: username,
-    password: password,
-  };
-
-  try {
-    const response = await axios.post(apiUrl, loginCredentials)
-
-    const token = response.data.token;
-
-    return token;
-  } catch (error) {
-    return '';
-  }
-}
+import {
+    IUser,
+    generateToken,
+    getPayloadFromToken,
+    getTokenFromRequest,
+} from '../utils/jwtUtils';
 
 let mongod: any;
 
-let token: string;
+enum PlanType {
+  FREE = 'FREE',
+  PREMIUM = 'PREMIUM',
+  PRO = 'PRO',
+}
 
-token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImZpcnN0TmFtZSI6IkpvaG4iLCJsYXN0TmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiam9obmRvZTEyMyIsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJwcm9maWxlUGljdHVyZSI6Imh0dHBzOi8vc3RvcmFnZS5nb29nbGVhcGlzLmNvbS9maXNnNC11c2VyLWltYWdlcy1idWNrZXQvZGVmYXVsdC11c2VyLmpwZyIsImNvaW5zQW1vdW50IjowLCJyb2xlIjoiVVNFUiIsInBsYW4iOiJQUk8ifSwiaWF0IjoxNzA2MDk1OTU1LCJleHAiOjE3MDYxODIzNTV9.uy7VYlJpQ66ZowMRjx0LpKPpn9G2EV8ezRsh3ktIdGY";
+enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+
+}
+const user : IUser = {
+  firstName: 'John',
+  lastName: 'Doe',
+  username : "johndoe123",
+  password : "securepassword",
+  email: "john.doe@example.com",
+  role: UserRole.USER,
+  plan: PlanType.PRO,
+}
+
+let token : string;
+generateToken(user)
+  .then((obtained_token) => {
+      token = obtained_token as string
+  })
+  .catch((error) => {
+      console.error('Error generating token:', error);
+  });
 
 const app = index.app
 
@@ -99,8 +111,6 @@ beforeAll(async () => {
 
   await setupCourses();
   await setupReviews();
-
-  //token = await obtainToken("johndoe123", "securepassword");
 });
 
 afterAll(async () => {
