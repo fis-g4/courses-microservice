@@ -1,0 +1,488 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Reviews/Courses Microservice API
+  description: API for the reviews/courses microservice of the FIS-G4 project.
+  contact:
+    name: David Barragán y Mathew Byte
+    email: ""
+    url: https://github.com/fis-g4/courses-microservice
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: http://localhost:8000/v1/reviews
+  - url: http://localhost:8000/v1/courses
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+paths:
+  /reviews/new:
+    post:
+      summary: Crea una nueva reseña.
+      tags:
+        - Reviews
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/definitions/Review"
+      responses:
+        "201":
+          description: Reseña creada exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Review"
+        "400":
+          description: Error en la solicitud.
+        "500":
+          description: Error interno del servidor.
+  /reviews:
+    get:
+      summary: Obtiene todas las reseñas.
+      tags:
+        - Reviews
+      responses:
+        "200":
+          description: Revisión recuperada exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/Review"
+        "500":
+          description: Error interno del servidor.
+  /reviews/{id}:
+    get:
+      summary: Obtiene una reseña por su ID.
+      tags:
+        - Reviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Reseña recuperada exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Review"
+        "404":
+          description: Reseña no encontrada.
+        "500":
+          description: Error interno del servidor.
+    put:
+      summary: Actualiza una reseña por su ID.
+      tags:
+        - Reviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/definitions/Review"
+      responses:
+        "200":
+          description: Revisión actualizada exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Review"
+        "400":
+          description: Error en la solicitud.
+        "404":
+          description: Reseña no encontrada.
+        "500":
+          description: Error interno del servidor.
+  /reviews/remove/{id}:
+    delete:
+      summary: Elimina una reseña por su ID.
+      tags:
+        - Reviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        "204":
+          description: Reseña eliminada exitosamente.
+        "404":
+          description: Reseña no encontrada.
+        "500":
+          description: Error interno del servidor.
+  /reviews/course/{courseId}:
+    get:
+      summary: Obtiene todas las reseñas asociadas a un curso por su ID.
+      tags:
+        - Reviews
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Reseñas del curso recuperadas exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/Review"
+        "500":
+          description: Error interno del servidor.
+  /reviews/user/{username}:
+    get:
+      summary: Obtiene todas las reseñas asociadas a un usuario por su nombre de
+        usuario.
+      tags:
+        - Reviews
+      parameters:
+        - name: username
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Reseñas del usuario recuperadas exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/Review"
+        "500":
+          description: Error interno del servidor.
+  /reviews/creator/{username}:
+    get:
+      summary: Obtiene todas las reseñas creadas por un usuario por su nombre de
+        usuario.
+      tags:
+        - Reviews
+      parameters:
+        - name: username
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Reseñas creadas por el usuario recuperadas exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/Review"
+        "500":
+          description: Error interno del servidor.
+  /courses/check:
+    get:
+      summary: Verifica que el servicio de cursos esté funcionando correctamente.
+      tags:
+        - Courses
+      responses:
+        "200":
+          description: El servicio de cursos está funcionando correctamente.
+          content:
+            application/json:
+              example:
+                message: The courses service is working properly!
+        "500":
+          description: Error interno del servidor.
+  /courses/categories:
+    get:
+      summary: Obtiene recuentos de categorías para los cursos.
+      tags:
+        - Courses
+      responses:
+        "200":
+          description: Recuentos de categorías recuperados exitosamente.
+          content:
+            application/json:
+              example:
+                category1: 5
+                category2: 10
+                category3: 7
+        "500":
+          description: Error interno del servidor.
+  /courses/best:
+    get:
+      summary: Obtiene los mejores cursos ordenados por puntuación.
+      tags:
+        - Courses
+      responses:
+        "200":
+          description: Mejores cursos recuperados exitosamente.
+          content:
+            application/json:
+              example:
+                - name: Curso 1
+                  description: Descripción del curso 1
+                  price: 19.99
+                  categories:
+                    - Categoria1
+                    - Categoria2
+                  language: Español
+                  creator: Usuario1
+                  score: 4.5
+                - name: Curso 2
+                  description: Descripción del curso 2
+                  price: 29.99
+                  categories:
+                    - Categoria3
+                    - Categoria4
+                  language: Inglés
+                  creator: Usuario2
+                  score: 4.8
+        "500":
+          description: Error interno del servidor.
+  /courses/new:
+    post:
+      summary: Crea un nuevo curso.
+      tags:
+        - Courses
+      requestBody:
+        description: Datos del nuevo curso.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/definitions/CourseFormInputs"
+      responses:
+        "201":
+          description: Curso creado exitosamente.
+        "400":
+          description: Error de validación al guardar.
+        "500":
+          description: Error interno del servidor.
+  /courses/list:
+    get:
+      summary: Obtiene la lista de cursos según los filtros proporcionados.
+      tags:
+        - Courses
+      responses:
+        "200":
+          description: Lista de cursos recuperada exitosamente.
+          content:
+            application/json:
+              example:
+                - name: Curso 1
+                  description: Descripción del curso 1
+                  price: 19.99
+                  categories:
+                    - Categoria1
+                    - Categoria2
+                  language: Español
+                  creator: Usuario1
+                  score: 4.5
+                - name: Curso 2
+                  description: Descripción del curso 2
+                  price: 29.99
+                  categories:
+                    - Categoria3
+                    - Categoria4
+                  language: Inglés
+                  creator: Usuario2
+                  score: 4.8
+        "500":
+          description: Error interno del servidor.
+  /courses/{courseId}:
+    put:
+      summary: Actualiza un curso existente.
+      tags:
+        - Courses
+      parameters:
+        - in: path
+          name: courseId
+          required: true
+          description: ID del curso a actualizar.
+          schema:
+            type: string
+      requestBody:
+        description: Nuevos datos del curso.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/definitions/CourseFormInputs"
+      responses:
+        "201":
+          description: Curso actualizado exitosamente.
+          content:
+            application/json:
+              example:
+                name: Nuevo Curso
+                description: Nueva descripción del curso
+                price: 24.99
+                categories:
+                  - NuevaCategoria1
+                  - NuevaCategoria2
+                language: Inglés
+                creator: UsuarioActualizado
+                score: 4.2
+        "404":
+          description: Curso no encontrado.
+        "500":
+          description: Error interno del servidor.
+    delete:
+      summary: Elimina un curso existente.
+      tags:
+        - Courses
+      parameters:
+        - in: path
+          name: courseId
+          required: true
+          description: ID del curso a eliminar.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Curso eliminado exitosamente.
+        "404":
+          description: Curso no encontrado.
+        "500":
+          description: Error interno del servidor.
+    get:
+      summary: Obtiene información detallada de un curso por su ID.
+      tags:
+        - Courses
+      parameters:
+        - in: path
+          name: courseId
+          required: true
+          description: ID del curso a obtener.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Curso obtenido exitosamente.
+          content:
+            application/json:
+              example:
+                name: Curso 1
+                description: Descripción del curso 1
+                price: 19.99
+                categories:
+                  - Categoria1
+                  - Categoria2
+                language: Español
+                creator: Usuario1
+                score: 4.5
+        "404":
+          description: Curso no encontrado.
+        "500":
+          description: Error interno del servidor.
+  /courses/{courseId}/classes:
+    get:
+      summary: Obtiene las clases de un curso específico.
+      tags:
+        - Courses
+      parameters:
+        - in: path
+          name: courseId
+          required: true
+          description: ID del curso del cual obtener las clases.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Clases obtenidas exitosamente.
+          content:
+            application/json:
+              example:
+                - _id: Clase1
+                  title: Clase de Introducción
+                  description: Descripción de la clase de introducción.
+                  videoUrl: https://www.youtube.com/watch?v=1234567890
+                - _id: Clase2
+                  title: Segunda Clase
+                  description: Descripción de la segunda clase.
+                  videoUrl: https://www.youtube.com/watch?v=0987654321
+        "404":
+          description: Curso no encontrado.
+        "500":
+          description: Error interno del servidor.
+  /courses/{courseId}/materials:
+    get:
+      summary: Obtiene los materiales de un curso específico.
+      tags:
+        - Courses
+      parameters:
+        - in: path
+          name: courseId
+          required: true
+          description: ID del curso del cual obtener los materiales.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Materiales obtenidos exitosamente.
+          content:
+            application/json:
+              example:
+                - _id: Material1
+                  title: Material de Introducción
+                  description: Descripción del material de introducción.
+                  fileUrl: https://www.example.com/material1.pdf
+                - _id: Material2
+                  title: Segundo Material
+                  description: Descripción del segundo material.
+                  fileUrl: https://www.example.com/material2.pdf
+        "404":
+          description: Curso no encontrado.
+        "500":
+          description: Error interno del servidor.
+definitions:
+  Review:
+    type: object
+    properties:
+      type:
+        type: string
+      user:
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+      rating:
+        type: number
+      course:
+        type: string
+      material:
+        type: string
+  CourseFormInputs:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      price:
+        type: number
+      categories:
+        type: array
+        items:
+          type: string
+      language:
+        type: string
+tags:
+  - name: Reviews
+    description: API para gestionar reseñas.
+  - name: Courses
+    description: API para gestionar cursos.
