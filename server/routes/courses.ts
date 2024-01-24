@@ -479,6 +479,37 @@ router.delete('/:courseId', async (req: Request, res: Response) => {
 
   return res.status(200).send("Course deleted!")
 })
+/**
+ * @swagger
+ * /courses/{courseId}:
+ *   get:
+ *     summary: Obtiene información detallada de un curso por su ID.
+ *     tags: [Courses]
+ *     parameters:
+ *       - in: path
+ *         name: courseId
+ *         required: true
+ *         description: ID del curso a obtener.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Curso obtenido exitosamente.
+ *         content:
+ *           application/json:
+ *             example:
+ *               name: 'Curso 1'
+ *               description: 'Descripción del curso 1'
+ *               price: 19.99
+ *               categories: ['Categoria1', 'Categoria2']
+ *               language: 'Español'
+ *               creator: 'Usuario1'
+ *               score: 4.5
+ *       404:
+ *         description: Curso no encontrado.
+ *       500:
+ *         description: Error interno del servidor.
+ */
 
 router.get('/:courseId', async (req: Request, res: Response) => {
     let decodedToken: IUser = await getPayloadFromToken(
@@ -619,7 +650,38 @@ router.get('/:courseId/classes', async (req: Request, res: Response) => {
   else 
     return res.status(404).json({ error: 'Course not found' });
   })
-
+/**
+ * @swagger
+ * /courses/{courseId}/materials:
+ *   get:
+ *     summary: Obtiene los materiales de un curso específico.
+ *     tags: [Courses]
+ *     parameters:
+ *       - in: path
+ *         name: courseId
+ *         required: true
+ *         description: ID del curso del cual obtener los materiales.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Materiales obtenidos exitosamente.
+ *         content:
+ *           application/json:
+ *             example:
+ *               - _id: 'Material1'
+ *                 title: 'Material de Introducción'
+ *                 description: 'Descripción del material de introducción.'
+ *                 fileUrl: 'https://www.example.com/material1.pdf'
+ *               - _id: 'Material2'
+ *                 title: 'Segundo Material'
+ *                 description: 'Descripción del segundo material.'
+ *                 fileUrl: 'https://www.example.com/material2.pdf'
+ *       404:
+ *         description: Curso no encontrado.
+ *       500:
+ *         description: Error interno del servidor.
+ */
 router.get('/:courseId/materials', async (req: Request, res: Response) => {
   let decodedToken: IUser = await getPayloadFromToken(
     getTokenFromRequest(req) ?? ''

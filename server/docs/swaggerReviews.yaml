@@ -72,7 +72,7 @@ paths:
           type: string
       responses:
         "200":
-          description: Revisión recuperada exitosamente.
+          description: Reseña recuperada exitosamente.
           content:
             application/json:
               schema:
@@ -359,7 +359,7 @@ paths:
         "500":
           description: Error interno del servidor.
     get:
-      summary: Obtiene la información detallada de un curso.
+      summary: Obtiene información detallada de un curso por su ID.
       tags:
         - Courses
       parameters:
@@ -371,29 +371,19 @@ paths:
             type: string
       responses:
         "200":
-          description: Información del curso obtenida exitosamente.
+          description: Curso obtenido exitosamente.
           content:
             application/json:
               example:
-                _id: "1234567890"
-                name: Curso Ejemplo
-                description: Descripción del curso.
+                name: Curso 1
+                description: Descripción del curso 1
                 price: 19.99
                 categories:
-                  - Categoría1
-                  - Categoría2
+                  - Categoria1
+                  - Categoria2
                 language: Español
-                creator: UsuarioCreador
+                creator: Usuario1
                 score: 4.5
-                access:
-                  - Estudiante1
-                  - Estudiante2
-                classes:
-                  - Clase1
-                  - Clase2
-                materials:
-                  - Material1
-                  - Material2
         "404":
           description: Curso no encontrado.
         "500":
@@ -447,13 +437,13 @@ paths:
             application/json:
               example:
                 - _id: Material1
-                  title: Material de Lectura
-                  type: Documento
-                  url: https://www.example.com/material1.pdf
+                  title: Material de Introducción
+                  description: Descripción del material de introducción.
+                  fileUrl: https://www.example.com/material1.pdf
                 - _id: Material2
-                  title: Video Tutorial
-                  type: Video
-                  url: https://www.youtube.com/watch?v=abcdefghijk
+                  title: Segundo Material
+                  description: Descripción del segundo material.
+                  fileUrl: https://www.example.com/material2.pdf
         "404":
           description: Curso no encontrado.
         "500":

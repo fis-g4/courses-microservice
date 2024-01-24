@@ -301,7 +301,24 @@ router.put('/:id', async (req, res) => {
 });
 
   
-
+/**
+ * @swagger
+ * /reviews:
+ *   get:
+ *     summary: Obtiene todas las reseñas.
+ *     tags: [Reviews]
+ *     responses:
+ *       200:
+ *         description: Revisión recuperada exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/definitions/Review'
+ *       500:
+ *         description: Error interno del servidor.
+ */
 //Obtener todas las reseñas
 router.get('/', async (req, res) => {
 try {
@@ -313,6 +330,29 @@ try {
 }
 });
 
+/**
+ * @swagger
+ * /reviews/{id}:
+ *   get:
+ *     summary: Obtiene una reseña por su ID.
+ *     tags: [Reviews]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Reseña recuperada exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/definitions/Review'
+ *       404:
+ *         description: Reseña no encontrada.
+ *       500:
+ *         description: Error interno del servidor.
+ */
 //Obtener una reseña por su id
 router.get('/:id', async (req, res) => {
     console.log("El id es: "+req.params.id);
@@ -330,6 +370,37 @@ router.get('/:id', async (req, res) => {
 });
 
 //Actualizar una reseña por su id
+/**
+ * @swagger
+ * /reviews/{id}:
+ *   put:
+ *     summary: Actualiza una reseña por su ID.
+ *     tags: [Reviews]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/definitions/Review'
+ *     responses:
+ *       200:
+ *         description: Revisión actualizada exitosamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/definitions/Review'
+ *       400:
+ *         description: Error en la solicitud.
+ *       404:
+ *         description: Reseña no encontrada.
+ *       500:
+ *         description: Error interno del servidor.
+ */
 
 router.put('/:id', async (req, res) => {
   let decodedToken: IUser = await getPayloadFromToken(
@@ -393,7 +464,25 @@ router.put('/:id', async (req, res) => {
 });
   
 //Elimina una reseña por su id
-
+/**
+ * @swagger
+ * /reviews/remove/{id}:
+ *   delete:
+ *     summary: Elimina una reseña por su ID.
+ *     tags: [Reviews]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         type: string
+ *     responses:
+ *       204:
+ *         description: Reseña eliminada exitosamente.
+ *       404:
+ *         description: Reseña no encontrada.
+ *       500:
+ *         description: Error interno del servidor.
+ */
 router.delete('/remove/:id', async (req, res) => {
   let review
   try {
