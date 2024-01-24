@@ -153,4 +153,41 @@ it('should delete a review for /:id endpoint', async () => {
   expect(response.status).toBe(204);
 });
 
-// Repeat the describe block for each endpoint you want to test
+
+it('should return an error for /new endpoint if the request is missing required fields', async () => {
+  const response = await request(app)
+    .post('/v1/reviews/new').set('Authorization', `Bearer ${token}`)
+    .send({
+      // Missing required fields
+    });
+  expect(response.status).toBe(400);
+  // Add more expectations based on your error handling
+});
+
+it('should return an error for / endpoint if user is not authenticated', async () => {
+  const response = await request(app).get('/v1/reviews');
+  expect(response.status).toBe(401);
+  // Add more expectations based on your error handling
+});
+
+it('should return an error for /:id endpoint if the review ID is invalid', async () => {
+  const response = await request(app).get('/v1/reviews/invalidReviewId').set('Authorization', `Bearer ${token}`);
+  expect(response.status).toBe(404);
+  // Add more expectations based on your error handling
+});
+
+it('should return an error for /:id endpoint if the review ID is invalid', async () => {
+  const response = await request(app)
+    .put('/v1/reviews/invalidReviewId').set('Authorization', `Bearer ${token}`)
+    .send({
+      // Valid update data
+    });
+  expect(response.status).toBe(404);
+  // Add more expectations based on your error handling
+});
+
+it('should return an error for /remove/:id endpoint if the review ID is invalid', async () => {
+  const response = await request(app).delete('/v1/reviews/remove/invalidReviewId').set('Authorization', `Bearer ${token}`);
+  expect(response.status).toBe(404);
+  // Add more expectations based on your error handling
+});

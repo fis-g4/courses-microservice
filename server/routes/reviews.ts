@@ -95,23 +95,23 @@ try {
 
 //Obtener una reseña por su id
 router.get('/:id', async (req, res) => {
-try {
     console.log("El id es: "+req.params.id);
-    const review = await Review.findById(req.params.id);
+    let review
+    try {
+      review = await Review.findById(req.params.id);
+    }
+    catch (error) {
+      return res.status(404).send("Reseña no encontrada")
+    }
     if (!review) {
-    return res.status(404).send('Reseña no encontrada');
+      return res.status(404).send('Reseña no encontrada');
     }
     res.status(200).send(review);
-} catch (error) {
-    console.error(error);
-    res.status(500).send('Error al obtener la reseña');
-}
 });
 
 //Actualizar una reseña por su id
 
 router.put('/:id', async (req, res) => {
-try {
   let decodedToken: IUser = await getPayloadFromToken(
     getTokenFromRequest(req) ?? ''
   )
@@ -130,8 +130,13 @@ try {
   if (req.body.material && !mongoose.isValidObjectId(req.body.material)) {
     return res.status(400).send('ID de material no válido');
   }
- 
-    const review = await Review.findById(req.params.id);
+    let review
+    try {
+      review = await Review.findById(req.params.id);
+    }
+    catch (error) {
+      return res.status(404).send("Reseña no encontrada")
+    }
     if (!review) {
     return res.status(404).send('Reseña no encontrada');
     }
@@ -165,27 +170,24 @@ try {
     }
 
     res.status(201).send(review);
-} catch (error) {
-    console.error(error);
-    res.status(500).send('Error al actualizar la reseña');
-}
 });
   
 //Elimina una reseña por su id
 
 router.delete('/remove/:id', async (req, res) => {
-try {
-    const review = await Review.findById(req.params.id);
-    if (!review) {
+  let review
+  try {
+    review = await Review.findById(req.params.id);
+  }
+  catch (error) {
     return res.status(404).send('Reseña no encontrada');
-    }
+  }
+  if (!review) {
+    return res.status(404).send('Reseña no encontrada');
+  }
 
-    await review.deleteOne();
-    res.status(204).send();
-} catch (error) {
-    console.error(error);
-    res.status(500).send('Error al eliminar la revisión');
-}
+  await review.deleteOne();
+  res.status(204).send();
 });
 
 //Buscar reseñas por el id del curso
