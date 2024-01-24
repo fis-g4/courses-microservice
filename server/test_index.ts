@@ -7,6 +7,7 @@ import reviews from './routes/reviews'
 import './db/conn'
 import { generateToken, verifyToken } from './utils/jwtUtils'
 import { Server } from 'http';
+import { AddressInfo } from 'net';
 
 const app: Express = express()
 
@@ -55,8 +56,9 @@ app.use('/v1/reviews', reviews)
 
 receiveMessages(MICROSERVICE_QUEUE)
 
-const server: Server = app.listen(port, () => {
-    console.info(`Courses microservice listening on port ${port}`)
-})
+const server: Server = app.listen(0, () => {
+    const assignedPort = (server.address() as AddressInfo).port;
+    console.info(`Courses microservice listening on port ${assignedPort}`);
+});
 
 export default { app, server };
