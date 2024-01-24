@@ -77,21 +77,23 @@ router.get('/check', async (req: Request, res: Response) => {
  *         description: Error interno del servidor.
  */
 router.get('/categories', async (req: Request, res: Response) => {
-  try {
-    const courses = await Course.find({});
-    const categoryCounts: { [key: string]: number } = {};
+  
+  const courses = await Course.find({});
 
-    courses.forEach((course) => {
-      course.categories.forEach((category) => {
-        categoryCounts[category] = (categoryCounts[category] || 0) + 1;
-      });
+  // Create an empty dictionary to store category counts
+  const categoryCounts: { [key: string]: number } = {};
+
+  // Iterate through each course
+  courses.forEach((course) => {
+    // Iterate through each category in the course
+    course.categories.forEach((category) => {
+      // Update the count in the dictionary
+      categoryCounts[category] = (categoryCounts[category] || 0) + 1;
     });
+  });
 
-    return res.status(200).json(categoryCounts);
-  } catch (error) {
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+  return res.status(200).json(categoryCounts);
+})
 
 /**
  * @swagger
@@ -123,8 +125,7 @@ router.get('/categories', async (req: Request, res: Response) => {
  *         description: Error interno del servidor.
  */
 router.get('/best', async (req: Request, res: Response) => {
-  try {
-    const courses = await Course.find().sort({ score: -1 }).limit(6);
+  const courses = await Course.find().sort({ score: -1 }).limit(6);
 
     const modifiedCourses = await Promise.all(
       courses.map(async (course) => {
@@ -143,10 +144,7 @@ router.get('/best', async (req: Request, res: Response) => {
     );
 
     return res.status(200).json(modifiedCourses);
-  } catch (error) {
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+})
 
 /**
  * @swagger
@@ -170,63 +168,53 @@ router.get('/best', async (req: Request, res: Response) => {
  *         description: Error interno del servidor.
  */
 router.post('/new', async (req: Request, res: Response) => {
-  try {
-    let decodedToken: IUser = await getPayloadFromToken(
-        getTokenFromRequest(req) ?? ''
-    )
-    const username: string = decodedToken.username
+  let decodedToken: IUser = await getPayloadFromToken(
+    getTokenFromRequest(req) ?? ''
+  )
+  const username: string = decodedToken.username
 
-    const firstName: string = decodedToken.firstName
-    const lastName: string = decodedToken.lastName
-    const profilePicture: string = decodedToken.profilePicture
-    
-    const materializedView = await MaterializedView.findOne({ username : username })
-    if (materializedView) {
-      materializedView.username = username;
-      materializedView.firstName = firstName;
-      materializedView.lastName = lastName;
-      materializedView.profilePicture = profilePicture;
+  const firstName: string = decodedToken.firstName
+  const lastName: string = decodedToken.lastName
+  const profilePicture: string = decodedToken.profilePicture
 
-      await materializedView.save();
-    }
-    else {
-      const newMaterializedView = MaterializedView.build({
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        profilePicture: profilePicture,
-      });
-  
-      await newMaterializedView.save()
-    }
+  const materializedView = await MaterializedView.findOne({ username : username })
+  if (materializedView) {
+    materializedView.username = username;
+    materializedView.firstName = firstName;
+    materializedView.lastName = lastName;
+    materializedView.profilePicture = profilePicture;
 
-    const { name, description, price, categories, language }: CourseFormInputs = req.body
-
-    const course = Course.build({
-      name: name, 
-      description: description, 
-      price: price,
-      categories: categories,
-      language: language,
-      creator: username,
-      score: 3,
-      access: [],
-      classes: [],
-      materials: [],
+    await materializedView.save();
+  }
+  else {
+    const newMaterializedView = MaterializedView.build({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      profilePicture: profilePicture,
     });
 
-    await course.save();
-
-    return res.status(201).send('Course created!')
-  } catch (error) {
-    //@ts-ignore
-    if (error.errors) {
-      return res.status(400).json({ error: 'Validation error when saving' });
-    }
-    else {
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
+    await newMaterializedView.save()
   }
+
+  const { name, description, price, categories, language }: CourseFormInputs = req.body
+
+  const course = Course.build({
+    name: name, 
+    description: description, 
+    price: price,
+    categories: categories,
+    language: language,
+    creator: username,
+    score: 3,
+    access: [],
+    classes: [],
+    materials: [],
+  });
+
+  await course.save();
+
+  return res.status(201).send('Course created!')
 })
 /**
  * @swagger
@@ -258,62 +246,58 @@ router.post('/new', async (req: Request, res: Response) => {
  *         description: Error interno del servidor.
  */
 router.get('/list', async (req: Request, res: Response) => {
-    try {
-      let decodedToken: IUser = await getPayloadFromToken(
-          getTokenFromRequest(req) ?? ''
-      )
-      const username: string = decodedToken.username
-      const firstName: string = decodedToken.firstName
-      const lastName: string = decodedToken.lastName
-      const profilePicture: string = decodedToken.profilePicture
-      
-      const materializedView = await MaterializedView.findOne({ username : username })
-      if (materializedView) {
-        materializedView.username = username;
-        materializedView.firstName = firstName;
-        materializedView.lastName = lastName;
-        materializedView.profilePicture = profilePicture;
-        
-        await materializedView.save();
+  let decodedToken: IUser = await getPayloadFromToken(
+    getTokenFromRequest(req) ?? ''
+  )
+  const username: string = decodedToken.username
+  const firstName: string = decodedToken.firstName
+  const lastName: string = decodedToken.lastName
+  const profilePicture: string = decodedToken.profilePicture
+
+  const materializedView = await MaterializedView.findOne({ username : username })
+  if (materializedView) {
+    materializedView.username = username;
+    materializedView.firstName = firstName;
+    materializedView.lastName = lastName;
+    materializedView.profilePicture = profilePicture;
+    
+    await materializedView.save();
+  }
+  else {
+    const newMaterializedView = MaterializedView.build({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      profilePicture: profilePicture,
+    });
+
+    await newMaterializedView.save()
+  }
+
+  let filters: { [key: string]: any } = {};
+
+  // Loop through query parameters
+  Object.keys(req.query).forEach((key) => {
+      if (key === 'categories' || key === 'otherListAttribute') {
+        // @ts-ignore
+        filters[key] = { $all: Array.isArray(req.query[key]) ? req.query[key].split(" ") : req.query[key].split(" ") };
+      } else if (key === 'textQuery' || key === 'otherTypeQuery') {
+        filters.$or = [
+          // @ts-ignore
+          { name: { $regex: new RegExp(req.query[key], 'i') } },
+          // @ts-ignore
+          { description: { $regex: new RegExp(req.query[key], 'i') } },
+        ]
       }
       else {
-        const newMaterializedView = MaterializedView.build({
-          firstName: firstName,
-          lastName: lastName,
-          username: username,
-          profilePicture: profilePicture,
-        });
-    
-        await newMaterializedView.save()
+        // If it's a single value attribute, directly assign the value
+        filters[key] = req.query[key];
       }
+  });
 
-      let filters: { [key: string]: any } = {};
+  const courses = await Course.find(filters);
 
-      // Loop through query parameters
-      Object.keys(req.query).forEach((key) => {
-          if (key === 'categories' || key === 'otherListAttribute') {
-            // @ts-ignore
-            filters[key] = { $all: Array.isArray(req.query[key]) ? req.query[key].split(" ") : req.query[key].split(" ") };
-          } else if (key === 'textQuery' || key === 'otherTypeQuery') {
-            filters.$or = [
-              // @ts-ignore
-              { name: { $regex: new RegExp(req.query[key], 'i') } },
-              // @ts-ignore
-              { description: { $regex: new RegExp(req.query[key], 'i') } },
-            ]
-          }
-          else {
-            // If it's a single value attribute, directly assign the value
-            filters[key] = req.query[key];
-          }
-      });
-
-      const courses = await Course.find(filters);
-
-      return res.status(200).json(courses);
-    } catch (error) {
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
+  return res.status(200).json(courses);
 })
 /**
  * @swagger
@@ -354,57 +338,59 @@ router.get('/list', async (req: Request, res: Response) => {
  *         description: Error interno del servidor.
  */
 router.put('/:courseId', async (req: Request, res: Response) => {
-  try {
-    let decodedToken: IUser = await getPayloadFromToken(
-        getTokenFromRequest(req) ?? ''
-    )
-    const username: string = decodedToken.username
+  let decodedToken: IUser = await getPayloadFromToken(
+    getTokenFromRequest(req) ?? ''
+  )
+  const username: string = decodedToken.username
 
-    const firstName: string = decodedToken.firstName
-    const lastName: string = decodedToken.lastName
-    const profilePicture: string = decodedToken.profilePicture
+  const firstName: string = decodedToken.firstName
+  const lastName: string = decodedToken.lastName
+  const profilePicture: string = decodedToken.profilePicture
+
+  const materializedView = await MaterializedView.findOne({ username : username })
+  if (materializedView) {
+    materializedView.username = username;
+    materializedView.firstName = firstName;
+    materializedView.lastName = lastName;
+    materializedView.profilePicture = profilePicture;
     
-    const materializedView = await MaterializedView.findOne({ username : username })
-    if (materializedView) {
-      materializedView.username = username;
-      materializedView.firstName = firstName;
-      materializedView.lastName = lastName;
-      materializedView.profilePicture = profilePicture;
-      
-      await materializedView.save();
-    }
-    else {
-      const newMaterializedView = MaterializedView.build({
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        profilePicture: profilePicture,
-      });
-  
-      await newMaterializedView.save()
-    }
-    
-    const { name, description, price, categories, language }: CourseFormInputs = req.body
-    const courseId = req.params.courseId;
-  
-    var course = await Course.findById(courseId);
-    if (course) {
-      course.name = name;
-      course.description = description;
-      course.price = price;
-      course.categories = categories;
-      course.language = language;
-      course.creator = username;
-  
-      await course.save();
-    
-      return res.status(201).json(course)
-    }
-    else {
-      return res.status(404).json(course)
-    }
-  } catch (error) {
-    return res.status(500).json({ error: 'Internal Server Error' });
+    await materializedView.save();
+  }
+  else {
+    const newMaterializedView = MaterializedView.build({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      profilePicture: profilePicture,
+    });
+
+    await newMaterializedView.save()
+  }
+
+  const { name, description, price, categories, language }: CourseFormInputs = req.body
+  const courseId = req.params.courseId;
+
+  let course
+  try {
+    course = await Course.findById(courseId)
+  }
+  catch (error) {
+    return res.status(404).send("Course couldn't be found")
+  }
+  if (course) {
+    course.name = name;
+    course.description = description;
+    course.price = price;
+    course.categories = categories;
+    course.language = language;
+    course.creator = username;
+
+    await course.save();
+
+    return res.status(201).json(course)
+  }
+  else {
+    return res.status(404).json(course)
   }
 })
 /**
@@ -429,7 +415,72 @@ router.put('/:courseId', async (req: Request, res: Response) => {
  *         description: Error interno del servidor.
  */
 router.delete('/:courseId', async (req: Request, res: Response) => {
+  let decodedToken: IUser = await getPayloadFromToken(
+    getTokenFromRequest(req) ?? ''
+  )
+  const username: string = decodedToken.username
+
+  const firstName: string = decodedToken.firstName
+  const lastName: string = decodedToken.lastName
+  const profilePicture: string = decodedToken.profilePicture
+
+  const materializedView = await MaterializedView.findOne({ username : username })
+  if (materializedView) {
+    materializedView.username = username;
+    materializedView.firstName = firstName;
+    materializedView.lastName = lastName;
+    materializedView.profilePicture = profilePicture;
+    
+    await materializedView.save();
+  }
+  else {
+    const newMaterializedView = MaterializedView.build({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      profilePicture: profilePicture,
+    });
+
+    await newMaterializedView.save()
+  }
+
+  const courseId = req.params.courseId;
+  
+  let course
   try {
+    course = await Course.findById(courseId)
+  }
+  catch (error) {
+    return res.status(404).send("Course couldn't be found")
+  }
+
+  let classIds: string[] = []
+  let materialIds: string[] = []
+
+  if (course) {
+      classIds = course.classes
+      materialIds = course.materials
+  }
+
+  const data = {
+      courseId,
+      classIds,
+      materialIds,
+  }
+
+  await sendMessage(
+      'learning-microservice',
+      'notificationDeleteCourse',
+      process.env.API_KEY ?? '',
+      JSON.stringify(data)
+  )
+
+  await Course.deleteOne({ _id : courseId })
+
+  return res.status(200).send("Course deleted!")
+})
+
+router.get('/:courseId', async (req: Request, res: Response) => {
     let decodedToken: IUser = await getPayloadFromToken(
         getTokenFromRequest(req) ?? ''
     )
@@ -460,117 +511,17 @@ router.delete('/:courseId', async (req: Request, res: Response) => {
     }
 
     const courseId = req.params.courseId;
-
-    const course = await Course.findById(courseId)
-    let classIds: string[] = []
-    let materialIds: string[] = []
-
-    if (course) {
-        classIds = course.classes
-        materialIds = course.materials
-    }
-
-    const data = {
-        courseId,
-        classIds,
-        materialIds,
-    }
-
-    await sendMessage(
-        'learning-microservice',
-        'notificationDeleteCourse',
-        process.env.API_KEY ?? '',
-        JSON.stringify(data)
-    )
-  
-    await Course.deleteOne({ _id : courseId })
-    
-    return res.status(200).send("Course deleted!")
-  } catch (error) {
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-})
-/**
- * @swagger
- * /courses/{courseId}:
- *   get:
- *     summary: Obtiene la información detallada de un curso.
- *     tags: [Courses]
- *     parameters:
- *       - in: path
- *         name: courseId
- *         required: true
- *         description: ID del curso a obtener.
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Información del curso obtenida exitosamente.
- *         content:
- *           application/json:
- *             example:
- *               _id: '1234567890'
- *               name: 'Curso Ejemplo'
- *               description: 'Descripción del curso.'
- *               price: 19.99
- *               categories: ['Categoría1', 'Categoría2']
- *               language: 'Español'
- *               creator: 'UsuarioCreador'
- *               score: 4.5
- *               access: ['Estudiante1', 'Estudiante2']
- *               classes: ['Clase1', 'Clase2']
- *               materials: ['Material1', 'Material2']
- *       404:
- *         description: Curso no encontrado.
- *       500:
- *         description: Error interno del servidor.
- */
-router.get('/:courseId', async (req: Request, res: Response) => {
+    let course
     try {
-      let decodedToken: IUser = await getPayloadFromToken(
-          getTokenFromRequest(req) ?? ''
-      )
-      const username: string = decodedToken.username
-
-      const firstName: string = decodedToken.firstName
-      const lastName: string = decodedToken.lastName
-      const profilePicture: string = decodedToken.profilePicture
-      
-      const materializedView = await MaterializedView.findOne({ username : username })
-      if (materializedView) {
-        materializedView.username = username;
-        materializedView.firstName = firstName;
-        materializedView.lastName = lastName;
-        materializedView.profilePicture = profilePicture;
-        
-        await materializedView.save();
-      }
-      else {
-        const newMaterializedView = MaterializedView.build({
-          firstName: firstName,
-          lastName: lastName,
-          username: username,
-          profilePicture: profilePicture,
-        });
-    
-        await newMaterializedView.save()
-      }
-
-      const courseId = req.params.courseId;
-      const course = await Course.findById(courseId);
-      if (course)
-        return res.status(200).json(course)
-      else
-        return res.status(404).json({ error: 'Course not found' });
-    } catch (error) {
-      //@ts-ignore
-      if (error.errors) {
-        return res.status(400).json({ error: 'Validation error when saving' });
-      }
-      else {
-        return res.status(500).json({ error: 'Internal Server Error' });
-      }
+      course = await Course.findById(courseId)
     }
+    catch (error) {
+      return res.status(404).send("Course couldn't be found")
+    }
+    if (course)
+      return res.status(200).json(course)
+    else
+      return res.status(404).json({ error: 'Course not found' });
 })
 /**
  * @swagger
@@ -605,171 +556,132 @@ router.get('/:courseId', async (req: Request, res: Response) => {
  *         description: Error interno del servidor.
  */
 router.get('/:courseId/classes', async (req: Request, res: Response) => {
-    try {
-      let decodedToken: IUser = await getPayloadFromToken(
-          getTokenFromRequest(req) ?? ''
-      )
-      const username: string = decodedToken.username
-      
-      const firstName: string = decodedToken.firstName
-      const lastName: string = decodedToken.lastName
-      const profilePicture: string = decodedToken.profilePicture
-      
-      const materializedView = await MaterializedView.findOne({ username : username })
-      if (materializedView) {
-        materializedView.username = username;
-        materializedView.firstName = firstName;
-        materializedView.lastName = lastName;
-        materializedView.profilePicture = profilePicture;
-        
-        await materializedView.save();
-      }
-      else {
-        const newMaterializedView = MaterializedView.build({
-          firstName: firstName,
-          lastName: lastName,
-          username: username,
-          profilePicture: profilePicture,
-        });
+  let decodedToken: IUser = await getPayloadFromToken(
+    getTokenFromRequest(req) ?? ''
+  )
+  const username: string = decodedToken.username
+
+  const firstName: string = decodedToken.firstName
+  const lastName: string = decodedToken.lastName
+  const profilePicture: string = decodedToken.profilePicture
+
+  const materializedView = await MaterializedView.findOne({ username : username })
+  if (materializedView) {
+    materializedView.username = username;
+    materializedView.firstName = firstName;
+    materializedView.lastName = lastName;
+    materializedView.profilePicture = profilePicture;
     
-        await newMaterializedView.save()
-      }
-      
-      const courseId = req.params.courseId;
-      const course = await Course.findById(courseId);
-      if (course) {
-        let classes = null
-        //@ts-ignore
-        await redisClient.exists(courseId + " classes").then(async (exists) => {
-            if (exists === 1) {
-              //@ts-ignore
-              await redisClient.get(courseId + " classes").then((reply) => {
-                  classes = reply
-              })
-            } else {
-                const message = JSON.stringify({
-                    courseId,
-                })
-                await sendMessage(
-                    'learning-microservice',
-                    'requestAppClassesAndMaterials',
-                    process.env.API_KEY ?? '',
-                    message
-                )
-            }
-        })
-        return res.status(200).json(classes)
-      }
-      else 
-        return res.status(404).json({ error: 'Course not found' });
-    } catch (error) {
-      //@ts-ignore
-      if (error.errors) {
-        return res.status(400).json({ error: 'Validation error when saving' });
-      }
-      else {
-        return res.status(500).json({ error: 'Internal Server Error' });
-      }
-    }
-})
-/**
- * @swagger
- * /courses/{courseId}/materials:
- *   get:
- *     summary: Obtiene los materiales de un curso específico.
- *     tags: [Courses]
- *     parameters:
- *       - in: path
- *         name: courseId
- *         required: true
- *         description: ID del curso del cual obtener los materiales.
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Materiales obtenidos exitosamente.
- *         content:
- *           application/json:
- *             example:
- *               - _id: 'Material1'
- *                 title: 'Material de Lectura'
- *                 type: 'Documento'
- *                 url: 'https://www.example.com/material1.pdf'
- *               - _id: 'Material2'
- *                 title: 'Video Tutorial'
- *                 type: 'Video'
- *                 url: 'https://www.youtube.com/watch?v=abcdefghijk'
- *       404:
- *         description: Curso no encontrado.
- *       500:
- *         description: Error interno del servidor.
- */
+    await materializedView.save();
+  }
+  else {
+    const newMaterializedView = MaterializedView.build({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      profilePicture: profilePicture,
+    });
+
+    await newMaterializedView.save()
+  }
+
+  const courseId = req.params.courseId;
+  let course
+  try {
+    course = await Course.findById(courseId)
+  }
+  catch (error) {
+    return res.status(404).send("Course couldn't be found")
+  }
+  if (course) {
+    let classes = null
+    //@ts-ignore
+    await redisClient.exists(courseId + " classes").then(async (exists) => {
+        if (exists === 1) {
+          //@ts-ignore
+          await redisClient.get(courseId + " classes").then((reply) => {
+              classes = reply
+          })
+        } else {
+            const message = JSON.stringify({
+                courseId,
+            })
+            await sendMessage(
+                'learning-microservice',
+                'requestAppClassesAndMaterials',
+                process.env.API_KEY ?? '',
+                message
+            )
+        }
+    })
+    return res.status(200).json(classes)
+  }
+  else 
+    return res.status(404).json({ error: 'Course not found' });
+  })
+
 router.get('/:courseId/materials', async (req: Request, res: Response) => {
-    try {
-      let decodedToken: IUser = await getPayloadFromToken(
-          getTokenFromRequest(req) ?? ''
-      )
+  let decodedToken: IUser = await getPayloadFromToken(
+    getTokenFromRequest(req) ?? ''
+  )
 
-      const username: string = decodedToken.username
-      const firstName: string = decodedToken.firstName
-      const lastName: string = decodedToken.lastName
-      const profilePicture: string = decodedToken.profilePicture
-      
-      const materializedView = await MaterializedView.findOne({ username : username })
-      if (materializedView) {
-        materializedView.username = username;
-        materializedView.firstName = firstName;
-        materializedView.lastName = lastName;
-        materializedView.profilePicture = profilePicture;
-        
-        await materializedView.save();
-      }
-      else {
-        const newMaterializedView = MaterializedView.build({
-          firstName: firstName,
-          lastName: lastName,
-          username: username,
-          profilePicture: profilePicture,
-        });
+  const username: string = decodedToken.username
+  const firstName: string = decodedToken.firstName
+  const lastName: string = decodedToken.lastName
+  const profilePicture: string = decodedToken.profilePicture
+
+  const materializedView = await MaterializedView.findOne({ username : username })
+  if (materializedView) {
+    materializedView.username = username;
+    materializedView.firstName = firstName;
+    materializedView.lastName = lastName;
+    materializedView.profilePicture = profilePicture;
     
-        await newMaterializedView.save()
-      }
+    await materializedView.save();
+  }
+  else {
+    const newMaterializedView = MaterializedView.build({
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      profilePicture: profilePicture,
+    });
 
-      const courseId = req.params.courseId;
-      const course = await Course.findById(courseId);
-      if (course) {
-        let materials = null
-        //@ts-ignore
-        await redisClient.exists(courseId + " materials").then(async (exists) => {
-            if (exists === 1) {
-              //@ts-ignore
-              await redisClient.get(courseId + " materials").then((reply) => {
-                  materials = reply
-              })
-            } else {
-                const message = JSON.stringify({
-                    courseId,
-                })
-                await sendMessage(
-                    'learning-microservice',
-                    'requestAppClassesAndMaterials',
-                    process.env.API_KEY ?? '',
-                    message
-                )
-            }
-        })
-        return res.status(200).json(materials)
-      }
-      else 
-        return res.status(404).json({ error: 'Course not found' });
-    } catch (error) {
-      //@ts-ignore
-      if (error.errors) {
-        return res.status(400).json({ error: 'Validation error when saving' });
-      }
-      else {
-        return res.status(500).json({ error: 'Internal Server Error' });
-      }
-    }
+    await newMaterializedView.save()
+  }
+
+  const courseId = req.params.courseId;
+  let course
+  try {
+    course = await Course.findById(courseId)
+  }
+  catch (error) {
+    return res.status(404).send("Course couldn't be found")
+  }
+  if (course) {
+    let materials = null
+    //@ts-ignore
+    await redisClient.exists(courseId + " materials").then(async (exists) => {
+        if (exists === 1) {
+          //@ts-ignore
+          await redisClient.get(courseId + " materials").then((reply) => {
+              materials = reply
+          })
+        } else {
+            const message = JSON.stringify({
+                courseId,
+            })
+            await sendMessage(
+                'learning-microservice',
+                'requestAppClassesAndMaterials',
+                process.env.API_KEY ?? '',
+                message
+            )
+        }
+    })
+    return res.status(200).json(materials)
+  }
+  else 
+    return res.status(404).json({ error: 'Course not found' });
 })
 export default router

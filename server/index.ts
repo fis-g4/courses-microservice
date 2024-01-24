@@ -10,6 +10,7 @@ import fs from 'fs';
 import { receiveMessages } from './rabbitmq/operations'
 import swaggerjsdoc from 'swagger-jsdoc'
 import swaggerui from 'swagger-ui-express'
+
 const app: Express = express()
 
 app.use(express.json())
@@ -175,3 +176,5 @@ receiveMessages(MICROSERVICE_QUEUE)
 app.listen(port, () => {
     console.info(`Courses microservice listening on port ${port}`)
 })
+
+export default { app };

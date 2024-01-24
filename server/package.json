@@ -33,6 +33,7 @@
     "express-swagger-generator": "^1.1.17",
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
+    "mongodb-memory-server": "^9.1.6",
     "mongoose": "^8.0.3",
     "multer": "^1.4.5-lts.1",
     "redis": "^4.6.12",
@@ -62,8 +63,8 @@
     "jest-extended": "^4.0.2",
     "jest-fetch-mock": "^3.0.3",
     "nodemon": "^3.0.1",
-    "supertest": "^6.3.3",
-    "ts-jest": "^29.1.1",
+    "supertest": "^6.3.4",
+    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.1",
     "typescript": "^5.3.3"
   }

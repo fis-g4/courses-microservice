@@ -300,41 +300,116 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-/**
-* @swagger
-* /reviews/remove/{id}:
-*   delete:
-*     summary: Elimina una reseña por su ID.
-*     tags: [Reviews]
-*     parameters:
-*       - name: id
-*         in: path
-*         required: true
-*         type: string
-*     responses:
-*       204:
-*         description: Reseña eliminada exitosamente.
-*       404:
-*         description: Reseña no encontrada.
-*       500:
-*         description: Error interno del servidor.
-*/
-router.delete('/remove/:id', async (req, res) => {
-  try {
-      const review = await Review.findById(req.params.id);
-      if (!review) {
-          return res.status(404).send('Reseña no encontrada');
-      }
+  
 
-      await review.deleteOne();
-      res.status(204).send();
-  } catch (error) {
-      console.error(error);
-      res.status(500).send('Error al eliminar la revisión');
-  }
+//Obtener todas las reseñas
+router.get('/', async (req, res) => {
+try {
+    const reviews = await Review.find({});
+    res.status(200).send(reviews);
+} catch (error) {
+    console.error(error);
+    res.status(500).send('Error al obtener las reseñas');
+}
 });
 
-// ... (código anterior)
+//Obtener una reseña por su id
+router.get('/:id', async (req, res) => {
+    console.log("El id es: "+req.params.id);
+    let review
+    try {
+      review = await Review.findById(req.params.id);
+    }
+    catch (error) {
+      return res.status(404).send("Reseña no encontrada")
+    }
+    if (!review) {
+      return res.status(404).send('Reseña no encontrada');
+    }
+    res.status(200).send(review);
+});
+
+//Actualizar una reseña por su id
+
+router.put('/:id', async (req, res) => {
+  let decodedToken: IUser = await getPayloadFromToken(
+    getTokenFromRequest(req) ?? ''
+  )
+  const username: string = decodedToken.username
+  // Validar la existencia del curso
+  if (req.body.course && !mongoose.isValidObjectId(req.body.course)) {
+    return res.status(400).send('ID de curso no válido');
+  }
+
+  // Validar la existencia del creador (usuario)
+  if (req.body.creator && !mongoose.isValidObjectId(req.body.creator)) {
+    return res.status(400).send('ID de usuario no válido');
+  }
+
+  // Validar la existencia del material
+  if (req.body.material && !mongoose.isValidObjectId(req.body.material)) {
+    return res.status(400).send('ID de material no válido');
+  }
+    let review
+    try {
+      review = await Review.findById(req.params.id);
+    }
+    catch (error) {
+      return res.status(404).send("Reseña no encontrada")
+    }
+    if (!review) {
+    return res.status(404).send('Reseña no encontrada');
+    }
+
+    // Actualizar las propiedades según lo que venga en el cuerpo de la solicitud
+
+    review.set({
+      title: req.body.title, 
+      description: req.body.description, 
+      score: req.body.score,
+      course: req.body.course,
+      material: req.body.material,
+      creator: username
+    });
+    await review.save();
+    const courseId = req.body.course;
+    const course = await Course.findById(courseId);
+    if (course) {
+      const reviews = await Review.find({ course : courseId })
+
+      let total_rating = 0
+      let total_reviews = 0
+      for (let review of reviews) {
+          total_rating += review.rating
+          total_reviews += 1
+      }
+      if (total_reviews > 0) {
+        course.score = total_rating / total_reviews;
+      }
+      await course.save();
+    }
+
+    res.status(201).send(review);
+});
+  
+//Elimina una reseña por su id
+
+router.delete('/remove/:id', async (req, res) => {
+  let review
+  try {
+    review = await Review.findById(req.params.id);
+  }
+  catch (error) {
+    return res.status(404).send('Reseña no encontrada');
+  }
+  if (!review) {
+    return res.status(404).send('Reseña no encontrada');
+  }
+
+  await review.deleteOne();
+  res.status(204).send();
+});
+
 
 /**
  * @swagger
