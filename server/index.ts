@@ -41,11 +41,11 @@ const swaggerOptionsReviews = {
         servers: [
             {
                 url:
-                    process.env.BASE_URL ?? 'http://localhost:8000/v1/reviews',
+                    process.env.BASE_URL ?? 'https://api.javiercavlop.com/v1/reviews',
             },
             {
                 url:
-                    process.env.BASE_URL ?? 'http://localhost:8000/v1/courses',
+                    process.env.BASE_URL ?? 'https://api.javiercavlop.com/v1/courses',
             },
         ],
         components: {
