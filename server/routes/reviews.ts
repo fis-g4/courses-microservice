@@ -138,35 +138,6 @@ router.post('/new', async (req, res) => {
         res.status(500).send('Error al crear la revisión');
     }
 });
-
-/**
- * @swagger
- * /reviews:
- *   get:
- *     summary: Obtiene todas las reseñas.
- *     tags: [Reviews]
- *     responses:
- *       200:
- *         description: Revisión recuperada exitosamente.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/definitions/Review'
- *       500:
- *         description: Error interno del servidor.
- */
-router.get('/', async (req, res) => {
-    try {
-        const reviews = await Review.find({});
-        res.status(200).send(reviews);
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error al obtener las reseñas');
-    }
-});
-
   
 /**
  * @swagger
