@@ -69,12 +69,13 @@ async function populateDB() {
     console.log('Populating DB...');
     
     if (process.env.NODE_ENV !== 'production' && process.env.npm_config_run_tests!== 'true') {
-
+/*
         User.collection.countDocuments().then((count) => {
             if (count === 0) {
                 
             }
         })
+*/
     }else if(process.env.npm_config_run_tests=== 'true'){
         
     }
