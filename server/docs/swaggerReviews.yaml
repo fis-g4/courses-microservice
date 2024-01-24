@@ -11,8 +11,8 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
 servers:
-  - url: http://localhost:8000/v1/reviews
-  - url: http://localhost:8000/v1/courses
+  - url: https://api.javiercavlop.com/v1/reviews
+  - url: https://api.javiercavlop.com/v1/courses
 components:
   securitySchemes:
     bearerAuth:
