@@ -1,0 +1,214 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Reviews/Courses Microservice API
+  description: API for the reviews/courses microservice of the FIS-G4 project.
+  contact:
+    name: David Barragán y Mathew Byte
+    email: ""
+    url: https://github.com/fis-g4/courses-microservice
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: http://localhost:8000/v1/reviews
+  - url: http://localhost:8000/v1/courses
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []
+paths:
+  /reviews/new:
+    post:
+      summary: Crea una nueva reseña.
+      tags:
+        - Reviews
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/definitions/Review"
+      responses:
+        "201":
+          description: Reseña creada exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Review"
+        "400":
+          description: Error en la solicitud.
+        "500":
+          description: Error interno del servidor.
+  /reviews:
+    get:
+      summary: Obtiene todas las reseñas.
+      tags:
+        - Reviews
+      responses:
+        "200":
+          description: Revisión recuperada exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/Review"
+        "500":
+          description: Error interno del servidor.
+  /reviews/{id}:
+    get:
+      summary: Obtiene una reseña por su ID.
+      tags:
+        - Reviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Revisión recuperada exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Review"
+        "404":
+          description: Reseña no encontrada.
+        "500":
+          description: Error interno del servidor.
+    put:
+      summary: Actualiza una reseña por su ID.
+      tags:
+        - Reviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/definitions/Review"
+      responses:
+        "200":
+          description: Revisión actualizada exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Review"
+        "400":
+          description: Error en la solicitud.
+        "404":
+          description: Reseña no encontrada.
+        "500":
+          description: Error interno del servidor.
+  /reviews/remove/{id}:
+    delete:
+      summary: Elimina una reseña por su ID.
+      tags:
+        - Reviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        "204":
+          description: Reseña eliminada exitosamente.
+        "404":
+          description: Reseña no encontrada.
+        "500":
+          description: Error interno del servidor.
+  /reviews/course/{courseId}:
+    get:
+      summary: Obtiene todas las reseñas asociadas a un curso por su ID.
+      tags:
+        - Reviews
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Reseñas del curso recuperadas exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/Review"
+        "500":
+          description: Error interno del servidor.
+  /reviews/user/{username}:
+    get:
+      summary: Obtiene todas las reseñas asociadas a un usuario por su nombre de
+        usuario.
+      tags:
+        - Reviews
+      parameters:
+        - name: username
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Reseñas del usuario recuperadas exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/Review"
+        "500":
+          description: Error interno del servidor.
+  /reviews/creator/{username}:
+    get:
+      summary: Obtiene todas las reseñas creadas por un usuario por su nombre de
+        usuario.
+      tags:
+        - Reviews
+      parameters:
+        - name: username
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Reseñas creadas por el usuario recuperadas exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/Review"
+        "500":
+          description: Error interno del servidor.
+definitions:
+  Review:
+    type: object
+    properties:
+      type:
+        type: string
+      user:
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+      rating:
+        type: number
+      course:
+        type: string
+      material:
+        type: string
+tags:
+  - name: Reviews
+    description: API para gestionar reseñas.
