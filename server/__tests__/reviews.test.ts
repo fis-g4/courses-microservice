@@ -5,12 +5,34 @@ import mongoose from 'mongoose';
 import { Course } from '../db/models/course'
 import { Review } from '../db/models/review'
 import index from '../test_index';
+import axios from 'axios';
+
+async function obtainToken(username: string, password: string): Promise<string> {
+  const apiUrl = 'https://api.javiercavlop.com/v1/users/login';
+
+  const loginCredentials = {
+    username: username,
+    password: password,
+  };
+
+  try {
+    const response = await axios.post(apiUrl, loginCredentials)
+
+    const token = response.data.token;
+
+    return token;
+  } catch (error) {
+    return '';
+  }
+}
 
 let mongod: any;
 
-const app = index.app
+let token: string;
 
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImZpcnN0TmFtZSI6IkpvaG4iLCJsYXN0TmFtZSI6IkRvZSAyIiwidXNlcm5hbWUiOiJqb2huZG9lNDU4IiwiZW1haWwiOiJqb2huLmRvZUBleGFtcGxlNC5jb20iLCJwcm9maWxlUGljdHVyZSI6Imh0dHBzOi8vc3RvcmFnZS5nb29nbGVhcGlzLmNvbS9maXNnNC11c2VyLWltYWdlcy1idWNrZXQvZGVmYXVsdC11c2VyLmpwZyIsImNvaW5zQW1vdW50IjowLCJyb2xlIjoiVVNFUiIsInBsYW4iOiJQUk8ifSwiaWF0IjoxNzA2MDA4NDYyLCJleHAiOjE3MDYwOTQ4NjJ9.gq3kzKoJK1vidlTbCDJArnMQUPKCNl_JoDiguLqgkeU';
+token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImZpcnN0TmFtZSI6IkpvaG4iLCJsYXN0TmFtZSI6IkRvZSIsInVzZXJuYW1lIjoiam9obmRvZTEyMyIsImVtYWlsIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJwcm9maWxlUGljdHVyZSI6Imh0dHBzOi8vc3RvcmFnZS5nb29nbGVhcGlzLmNvbS9maXNnNC11c2VyLWltYWdlcy1idWNrZXQvZGVmYXVsdC11c2VyLmpwZyIsImNvaW5zQW1vdW50IjowLCJyb2xlIjoiVVNFUiIsInBsYW4iOiJQUk8ifSwiaWF0IjoxNzA2MDk1OTU1LCJleHAiOjE3MDYxODIzNTV9.uy7VYlJpQ66ZowMRjx0LpKPpn9G2EV8ezRsh3ktIdGY";
+
+const app = index.app
 
 const setupCourses = async () => {
   const sampleCourses = [
@@ -77,6 +99,8 @@ beforeAll(async () => {
 
   await setupCourses();
   await setupReviews();
+
+  //token = await obtainToken("johndoe123", "securepassword");
 });
 
 afterAll(async () => {

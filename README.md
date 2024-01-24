@@ -1,14 +1,9 @@
 # courses-microservice
 This microservice manages courses.
 
-## Targets:
+# reviews-microservice
+This microservice manages reviews.
 
-- Implementar un frontend con rutas y navegación.
-- Implementar pruebas en la interfaz de usuario.
-- Usar redux como forma de gestionar el estado de los componentes de React en el frontend.
-- Usar el patrón materialized view para mantener internamente el estado de otros microservicios.
-- Implementar cachés o algún mecanismo para optimizar el acceso a datos de otros recursos.
-- Implementar el patrón “circuit breaker” en las comunicaciones con otros servicios.
-- Implementar mecanismos de gestión de la capacidad como throttling o feature toggles.
+The reviews-microservice has been integrated from the following repository: https://github.com/fis-g4/review-microservice
 
-Completed targets: 0/6
+The reviews-microservice was integrated in the following commit: https://github.com/fis-g4/courses-microservice/commit/264f6a1a6d41b99ab7c508045dd71a6a4f8a9e0f

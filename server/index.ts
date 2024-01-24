@@ -29,7 +29,7 @@ const swaggerOptionsReviews = {
             description:
                 'API for the reviews/courses microservice of the FIS-G4 project.',
             contact: {
-                name: 'David Barragán y Mathew Byte',
+                name: 'David Barragán y Matthew Bwye',
                 email: '',
                 url: 'https://github.com/fis-g4/courses-microservice',
             },
@@ -75,7 +75,7 @@ const swaggerOptionsCourses = {
             description:
                 'API for the reviews/courses microservice of the FIS-G4 project.',
             contact: {
-                name: 'Mathew Byte',
+                name: 'Matthew Bwye',
                 email: '',
                 url: 'https://github.com/fis-g4/courses-microservice',
             },
